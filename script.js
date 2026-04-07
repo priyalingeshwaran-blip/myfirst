@@ -25,12 +25,7 @@ function toggleDark() {
 }
 function togglePhotos() {
   let x = document.getElementById("photos");
-
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
+  x.classList.toggle("show");
 }
 function logout(){
   localStorage.removeItem("loggedIn");
