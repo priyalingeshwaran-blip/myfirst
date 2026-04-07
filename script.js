@@ -23,7 +23,15 @@ function pt(){
 function toggleDark() {
   document.body.classList.toggle("dark");
 }
+function togglePhotos() {
+  let x = document.getElementById("photos");
 
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 function logout(){
   localStorage.removeItem("loggedIn");
   window.location = "login.html"; 
