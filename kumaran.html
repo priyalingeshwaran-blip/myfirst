@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>StayFinder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#dce8f5; --white:#ffffff; --dark:#0f172a; --grey:#64748b;
+  --teal:#0ea5e9; --teal2:#38bdf8; --star:#f59e0b; --radius:22px; --radius-sm:14px;
+  --glass-bg:rgba(255,255,255,0.18); --glass-border:rgba(255,255,255,0.55);
+  --glass-shadow:0 8px 32px rgba(14,165,233,0.18), 0 1.5px 0 rgba(255,255,255,0.7) inset;
+  --glass-blur:blur(22px) saturate(1.8); --glass-hover-bg:rgba(255,255,255,0.30);
+  --dglass-bg:rgba(15,23,42,0.35); --dglass-border:rgba(255,255,255,0.18);
+  --dglass-shadow:0 8px 32px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.18) inset;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#b8d4f0 0%,#c5daea 40%,#bce0d8 100%);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;}
+body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(60px);opacity:0.45;pointer-events:none;z-index:0;animation:blobDrift 12s ease-in-out infinite alternate;}
+body::before{width:420px;height:420px;top:-80px;left:-80px;background:radial-gradient(circle,#93c5fd,#60a5fa);}
+body::after{width:380px;height:380px;bottom:-60px;right:-60px;background:radial-gradient(circle,#6ee7b7,#34d399);animation-delay:-6s;}
+@keyframes blobDrift{0%{transform:scale(1) translate(0,0);}100%{transform:scale(1.18) translate(30px,20px);}}
+.phone{width:100%;max-width:420px;min-height:100vh;position:relative;overflow:hidden;z-index:1;}
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fadeUp .35s cubic-bezier(.4,0,.2,1);}
+.screen.active{display:flex;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px) scale(.98);}to{opacity:1;transform:translateY(0) scale(1);}}
+
+/* GLASS BTN */
+.glass-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;border:1.5px solid var(--glass-border);background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);box-shadow:var(--glass-shadow);color:var(--dark);font-family:'DM Sans',sans-serif;font-weight:600;font-size:16px;cursor:pointer;transition:background .2s,box-shadow .2s,transform .15s;overflow:hidden;padding:16px 32px;width:100%;}
+.glass-btn::before{content:'';position:absolute;top:-60%;left:-75%;width:50%;height:220%;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.55) 50%,transparent 60%);transform:skewX(-15deg);transition:left .45s ease;pointer-events:none;}
+.glass-btn:hover::before,.glass-btn:active::before{left:125%;}
+.glass-btn:hover{background:var(--glass-hover-bg);box-shadow:0 12px 40px rgba(14,165,233,0.22),0 1.5px 0 rgba(255,255,255,0.8) inset;}
+.glass-btn:active{transform:scale(.97);}
+.glass-btn-primary{background:linear-gradient(135deg,rgba(14,165,233,0.55) 0%,rgba(56,189,248,0.40) 100%);border-color:rgba(255,255,255,0.65);color:#fff;box-shadow:0 8px 32px rgba(14,165,233,0.35),0 1.5px 0 rgba(255,255,255,0.55) inset;text-shadow:0 1px 2px rgba(0,0,0,0.18);}
+.glass-btn-primary:hover{background:linear-gradient(135deg,rgba(14,165,233,0.72),rgba(56,189,248,0.58));}
+.glass-btn-dark{background:var(--dglass-bg);border-color:var(--dglass-border);color:#fff;box-shadow:var(--dglass-shadow);text-shadow:0 1px 3px rgba(0,0,0,0.3);}
+
+/* GLASS INPUT */
+.glass-input{width:100%;padding:15px 20px;border-radius:16px;border:1.5px solid rgba(255,255,255,0.55);background:rgba(255,255,255,0.22);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);box-shadow:0 2px 12px rgba(14,165,233,0.08),0 1px 0 rgba(255,255,255,0.7) inset;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--dark);outline:none;transition:border .2s,box-shadow .2s;}
+.glass-input::placeholder{color:rgba(15,23,42,0.4);}
+.glass-input:focus{border-color:rgba(14,165,233,0.6);box-shadow:0 0 0 3px rgba(14,165,233,0.12),0 1px 0 rgba(255,255,255,0.7) inset;}
+
+.glass-card{background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border-radius:var(--radius);box-shadow:0 8px 32px rgba(14,165,233,0.10),0 1px 0 rgba(255,255,255,0.8) inset;}
+
+/* SPLASH */
+#screen-splash{align-items:center;justify-content:flex-end;padding:0 28px 60px;gap:0;min-height:100vh;}
+.splash-art{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding-top:60px;}
+.splash-logo{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;background:linear-gradient(135deg,#0f172a 0%,#0ea5e9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;}
+.splash-sub{font-size:15px;color:rgba(15,23,42,0.55);font-weight:400;}
+.splash-buttons{display:flex;flex-direction:column;gap:14px;width:100%;}
+.splash-divider{display:flex;align-items:center;gap:12px;margin:4px 0;}
+.splash-divider-line{flex:1;height:1px;background:rgba(255,255,255,0.55);}
+.splash-divider-text{font-size:13px;color:rgba(15,23,42,0.4);font-weight:500;}
+
+/* AUTH */
+#screen-signup,#screen-signin{padding:0 28px 40px;overflow-y:auto;}
+.auth-header{padding:56px 0 0;margin-bottom:28px;}
+.auth-back{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;margin-bottom:22px;box-shadow:0 2px 12px rgba(0,0,0,0.07);transition:transform .15s;}
+.auth-back:active{transform:scale(.93);}
+.auth-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.auth-subtitle{font-size:14px;color:var(--grey);}
+.auth-form{display:flex;flex-direction:column;gap:14px;margin-bottom:22px;}
+.input-label{font-size:11px;font-weight:700;color:rgba(15,23,42,0.5);margin-bottom:5px;text-transform:uppercase;letter-spacing:.7px;}
+.input-wrap{display:flex;flex-direction:column;}
+.auth-footer-text{text-align:center;font-size:14px;color:var(--grey);margin-top:16px;}
+.auth-link{color:var(--teal);font-weight:700;cursor:pointer;}
+.field-error{font-size:11px;color:#ef4444;margin-top:4px;padding-left:4px;display:none;}
+.field-error.visible{display:block;}
+.input-eye{position:relative;}
+.input-eye .glass-input{padding-right:48px;}
+.eye-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--grey);padding:4px;}
+
+/* HOME */
+#screen-home{background:transparent;}
+.home-header{padding:52px 24px 16px;display:flex;justify-content:space-between;align-items:center;}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#60a5fa);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;border:2px solid rgba(255,255,255,0.7);box-shadow:0 4px 16px rgba(167,139,250,0.3);}
+.notif-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.3);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,0.06);transition:transform .15s;}
+.notif-btn:active{transform:scale(.93);}
+.user-greeting{display:flex;flex-direction:column;text-align:center;}
+.user-greeting-name{font-size:14px;font-weight:700;color:var(--dark);}
+.user-greeting-loc{font-size:12px;color:var(--grey);}
+
+/* CATEGORY FILTER PILLS */
+.cat-row{display:flex;gap:10px;padding:0 20px 18px;overflow-x:auto;scrollbar-width:none;}
+.cat-row::-webkit-scrollbar{display:none;}
+.cat-pill{flex-shrink:0;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,0.55);background:rgba(255,255,255,0.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--dark);transition:all .2s;box-shadow:0 2px 8px rgba(14,165,233,0.07);}
+.cat-pill.active{background:linear-gradient(135deg,rgba(14,165,233,0.55),rgba(56,189,248,0.4));color:#fff;border-color:rgba(255,255,255,0.65);box-shadow:0 4px 16px rgba(14,165,233,0.3);}
+
+.hero-card{margin:0 20px 22px;border-radius:var(--radius);overflow:hidden;position:relative;height:200px;cursor:pointer;box-shadow:0 16px 48px rgba(14,165,233,0.18);transition:transform .2s;}
+.hero-card:active{transform:scale(.98);}
+.hero-card-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.hero-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.52) 0%,rgba(0,0,0,0.05) 60%);padding:20px;display:flex;flex-direction:column;justify-content:flex-end;}
+.hero-hotel-name{color:white;font-family:'Playfair Display',serif;font-size:21px;font-weight:600;}
+.hero-rating{display:flex;align-items:center;gap:6px;margin-top:6px;}
+.hero-rating .stars{color:var(--star);font-size:13px;}
+.hero-rating .rating-val{color:rgba(255,255,255,.9);font-size:13px;font-weight:500;}
+.fav-btn{position:absolute;top:14px;right:14px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,0.22);border:1.5px solid rgba(255,255,255,0.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:white;font-size:16px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.12),0 1px 0 rgba(255,255,255,0.55) inset;transition:transform .15s,background .2s;}
+.fav-btn:active{transform:scale(.92);}
+
+.section-header{padding:0 24px 14px;display:flex;justify-content:space-between;align-items:center;}
+.section-title{font-size:18px;font-weight:700;color:var(--dark);}
+.see-all{font-size:13px;color:var(--teal);font-weight:700;cursor:pointer;}
+
+.cards-row{display:flex;gap:14px;padding:0 20px 24px;overflow-x:auto;scrollbar-width:none;}
+.cards-row::-webkit-scrollbar{display:none;}
+.hotel-card-sm{min-width:155px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.32);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);box-shadow:0 6px 24px rgba(14,165,233,0.10),0 1px 0 rgba(255,255,255,0.8) inset;overflow:hidden;cursor:pointer;flex-shrink:0;transition:transform .2s;}
+.hotel-card-sm:active{transform:scale(.97);}
+.hotel-card-sm-img{height:95px;width:100%;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;}
+.img1{background:linear-gradient(135deg,#ffecd2,#fcb69f);}
+.img2{background:linear-gradient(135deg,#a1c4fd,#c2e9fb);}
+.img3{background:linear-gradient(135deg,#d4fc79,#96e6a1);}
+.img4{background:linear-gradient(135deg,#fccb90,#d57eeb);}
+.img5{background:linear-gradient(135deg,#e0c3fc,#8ec5fc);}
+.img6{background:linear-gradient(135deg,#fddb92,#d1fdff);}
+.img7{background:linear-gradient(135deg,#f6d365,#fda085);}
+.img8{background:linear-gradient(135deg,#a8edea,#fed6e3);}
+.hotel-card-sm-body{padding:10px 12px;}
+.hotel-card-sm-name{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:5px;}
+.hotel-card-sm-row{display:flex;justify-content:space-between;align-items:center;}
+.hotel-card-sm-price{font-size:14px;font-weight:700;color:var(--dark);}
+.hotel-card-sm-rating{font-size:11px;color:var(--grey);}
+.sm-save-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.6);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:transform .15s;}
+.sm-save-btn:active{transform:scale(.88);}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:space-around;background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.65);backdrop-filter:blur(24px) saturate(1.8);-webkit-backdrop-filter:blur(24px) saturate(1.8);border-radius:999px;padding:10px 20px 14px;box-shadow:0 8px 32px rgba(14,165,233,0.15),0 1.5px 0 rgba(255,255,255,0.9) inset;width:calc(100% - 48px);max-width:372px;z-index:200;}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px 14px;font-size:10px;color:rgba(15,23,42,0.45);font-family:'DM Sans',sans-serif;font-weight:600;}
+.nav-btn.active{color:var(--teal);}
+.nav-btn .icon{font-size:20px;}
+.nav-center-btn{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,rgba(14,165,233,0.65),rgba(56,189,248,0.5));border:2px solid rgba(255,255,255,0.7);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 20px rgba(14,165,233,0.45),0 1px 0 rgba(255,255,255,0.7) inset;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.nav-center-btn:active{transform:scale(.93);}
+
+/* DETAIL */
+#screen-detail{background:transparent;}
+.detail-hero{height:255px;position:relative;background:linear-gradient(135deg,#e0e7ef,#c8d8e8);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.detail-back-btn{position:absolute;top:52px;left:20px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.32);border:1.5px solid rgba(255,255,255,0.65);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.10),0 1px 0 rgba(255,255,255,0.7) inset;transition:transform .15s;}
+.detail-back-btn:active{transform:scale(.93);}
+.detail-save-btn{position:absolute;top:52px;right:20px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.32);border:1.5px solid rgba(255,255,255,0.65);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.10);transition:transform .15s;}
+.detail-save-btn:active{transform:scale(.93);}
+.detail-tabs{display:flex;padding:0 24px;border-bottom:1px solid rgba(255,255,255,0.45);background:rgba(255,255,255,0.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.detail-tab{padding:14px 0;margin-right:28px;font-size:14px;font-weight:600;color:var(--grey);border:none;background:none;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;}
+.detail-tab.active{color:var(--dark);border-bottom-color:var(--teal);}
+.detail-body{padding:20px 24px;flex:1;overflow-y:auto;padding-bottom:110px;}
+.detail-hotel-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.detail-location{color:var(--grey);font-size:13px;margin-bottom:14px;}
+.detail-price{font-size:28px;font-weight:700;color:var(--dark);}
+.detail-price-sub{font-size:13px;color:var(--grey);}
+.detail-guests{display:flex;align-items:center;margin-bottom:12px;}
+.guest-avatar{width:34px;height:34px;border-radius:50%;border:2.5px solid rgba(255,255,255,0.8);margin-right:-10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;}
+.ga1{background:#f97316;}.ga2{background:#6366f1;}.ga3{background:#14b8a6;}
+.guest-count{margin-left:22px;font-size:13px;color:var(--grey);}
+.detail-stars{display:flex;align-items:center;gap:7px;margin-bottom:18px;}
+.detail-stars .star-icons{color:var(--star);font-size:16px;letter-spacing:1px;}
+.detail-stars .rating-text{font-size:14px;font-weight:700;color:var(--dark);}
+.detail-stars .reviews{font-size:12px;color:var(--grey);}
+.amenities-row{display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;}
+.amenity-chip{background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:999px;padding:6px 14px;font-size:12px;color:var(--dark);font-weight:500;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(14,165,233,0.07),0 1px 0 rgba(255,255,255,0.8) inset;}
+.detail-desc-title{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.detail-desc-text{font-size:13px;color:var(--grey);line-height:1.75;}
+.detail-desc-more{color:var(--teal);font-weight:700;cursor:pointer;}
+
+/* REVIEWS SECTION */
+.reviews-section{margin-top:20px;}
+.reviews-title{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.review-card{background:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(14,165,233,0.06);}
+.review-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.review-user{display:flex;align-items:center;gap:8px;}
+.review-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;}
+.review-name{font-size:13px;font-weight:700;color:var(--dark);}
+.review-date{font-size:11px;color:var(--grey);}
+.review-stars{color:var(--star);font-size:12px;}
+.review-text{font-size:12px;color:var(--grey);line-height:1.6;}
+
+.swipe-btn-container{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;padding:16px 24px 36px;background:linear-gradient(to top,rgba(220,232,245,0.97) 60%,transparent);z-index:150;}
+
+/* MAP */
+#screen-map{background:transparent;}
+.map-header{padding:52px 24px 14px;display:flex;justify-content:space-between;align-items:center;}
+.map-title{font-size:18px;font-weight:700;color:var(--dark);}
+.map-area{margin:0 20px;border-radius:var(--radius);overflow:hidden;box-shadow:0 12px 40px rgba(14,165,233,0.18);height:235px;border:1.5px solid rgba(255,255,255,0.55);}
+.map-info-cards{display:flex;gap:12px;padding:14px 20px;}
+.map-info-card{flex:1;border-radius:var(--radius-sm);padding:14px;display:flex;align-items:center;gap:10px;}
+.map-info-icon{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.35);border:1.5px solid rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.map-info-val{font-size:16px;font-weight:700;color:var(--dark);}
+.map-info-label{font-size:11px;color:var(--grey);margin-top:2px;}
+.invite-section{padding:0 20px 14px;}
+.invite-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.invite-row{display:flex;align-items:center;justify-content:space-between;}
+.invite-avatars{display:flex;}
+.invite-status{background:rgba(14,165,233,0.15);border:1.5px solid rgba(14,165,233,0.3);color:var(--teal);font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.map-swipe-btn-container{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;padding:16px 24px 36px;background:linear-gradient(to top,rgba(220,232,245,0.97) 60%,transparent);z-index:150;}
+
+/* SEARCH SCREEN */
+#screen-search{background:transparent;padding:52px 20px 100px;overflow-y:auto;}
+.search-header{margin-bottom:20px;}
+.search-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--dark);margin-bottom:14px;}
+.search-bar-wrap{position:relative;}
+.search-bar-wrap .glass-input{padding-left:44px;font-size:14px;}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;}
+.search-clear{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:var(--grey);display:none;}
+.filter-row{display:flex;gap:10px;margin:14px 0;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex-shrink:0;padding:7px 16px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,0.55);background:rgba(255,255,255,0.22);backdrop-filter:blur(14px);color:var(--dark);transition:all .2s;}
+.filter-chip.active{background:linear-gradient(135deg,rgba(14,165,233,0.5),rgba(56,189,248,0.35));color:#fff;border-color:rgba(255,255,255,0.65);}
+.search-results-label{font-size:13px;font-weight:700;color:var(--grey);margin-bottom:12px;}
+.search-result-card{display:flex;gap:14px;background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:18px;padding:12px;margin-bottom:12px;cursor:pointer;box-shadow:0 4px 16px rgba(14,165,233,0.08);transition:transform .2s;}
+.search-result-card:active{transform:scale(.98);}
+.search-result-img{width:80px;height:80px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.search-result-info{flex:1;min-width:0;}
+.search-result-name{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.search-result-loc{font-size:12px;color:var(--grey);margin-bottom:6px;}
+.search-result-row{display:flex;justify-content:space-between;align-items:center;}
+.search-result-price{font-size:14px;font-weight:700;color:var(--dark);}
+.search-result-rating{font-size:12px;color:var(--grey);}
+.no-results{text-align:center;padding:40px 20px;color:var(--grey);}
+.no-results .no-icon{font-size:40px;margin-bottom:10px;}
+.no-results p{font-size:14px;}
+
+/* SAVED SCREEN */
+#screen-saved{background:transparent;padding:52px 20px 100px;overflow-y:auto;}
+.saved-header{margin-bottom:20px;}
+.saved-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.saved-sub{font-size:13px;color:var(--grey);}
+.saved-empty{text-align:center;padding:60px 20px;color:var(--grey);}
+.saved-empty .empty-icon{font-size:48px;margin-bottom:14px;}
+.saved-empty p{font-size:14px;line-height:1.6;}
+.saved-card{display:flex;gap:14px;background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:18px;padding:12px;margin-bottom:12px;cursor:pointer;box-shadow:0 4px 16px rgba(14,165,233,0.08);position:relative;transition:transform .2s;}
+.saved-card:active{transform:scale(.98);}
+.saved-card-img{width:80px;height:80px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.saved-card-info{flex:1;min-width:0;}
+.saved-card-name{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.saved-card-loc{font-size:12px;color:var(--grey);margin-bottom:6px;}
+.saved-card-row{display:flex;justify-content:space-between;align-items:center;}
+.saved-card-price{font-size:14px;font-weight:700;color:var(--dark);}
+.saved-card-rating{font-size:12px;color:var(--grey);}
+.saved-remove-btn{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:transform .15s;}
+.saved-remove-btn:active{transform:scale(.88);}
+
+/* PROFILE SCREEN */
+#screen-profile{background:transparent;padding:52px 20px 100px;overflow-y:auto;}
+.profile-header{display:flex;flex-direction:column;align-items:center;margin-bottom:28px;}
+.profile-avatar-big{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;color:white;border:3px solid rgba(255,255,255,0.7);box-shadow:0 8px 24px rgba(167,139,250,0.35);margin-bottom:14px;}
+.profile-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.profile-email{font-size:13px;color:var(--grey);margin-bottom:16px;}
+.profile-stats{display:flex;gap:12px;width:100%;margin-bottom:24px;}
+.stat-card{flex:1;border-radius:18px;padding:14px 10px;text-align:center;}
+.stat-val{font-size:22px;font-weight:700;color:var(--dark);}
+.stat-label{font-size:11px;color:var(--grey);margin-top:2px;}
+.profile-section-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.profile-menu-item{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:16px;padding:14px 16px;margin-bottom:10px;cursor:pointer;box-shadow:0 2px 8px rgba(14,165,233,0.06);transition:transform .2s;}
+.profile-menu-item:active{transform:scale(.98);}
+.profile-menu-left{display:flex;align-items:center;gap:12px;}
+.profile-menu-icon{font-size:20px;}
+.profile-menu-text{font-size:14px;font-weight:600;color:var(--dark);}
+.profile-menu-sub{font-size:11px;color:var(--grey);margin-top:1px;}
+.profile-menu-arrow{color:var(--grey);font-size:16px;}
+.profile-logout-btn{margin-top:8px;}
+
+/* BOOKING HISTORY */
+.booking-card{background:rgba(255,255,255,0.28);border:1.5px solid rgba(255,255,255,0.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:0 4px 16px rgba(14,165,233,0.06);}
+.booking-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.booking-hotel{font-size:14px;font-weight:700;color:var(--dark);}
+.booking-status{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;}
+.status-confirmed{background:rgba(34,197,94,0.15);color:#16a34a;border:1px solid rgba(34,197,94,0.3);}
+.status-upcoming{background:rgba(14,165,233,0.15);color:var(--teal);border:1px solid rgba(14,165,233,0.3);}
+.booking-detail{font-size:12px;color:var(--grey);display:flex;gap:12px;flex-wrap:wrap;}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:rgba(15,23,42,0.85);color:white;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.2);padding:11px 24px;border-radius:999px;font-size:13px;font-weight:600;opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:999;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.pb-nav{padding-bottom:100px;}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ═══ SPLASH ═══ -->
+<div class="screen active" id="screen-splash">
+  <div class="splash-art">
+    <div class="splash-logo">StayFinder</div>
+    <div class="splash-sub">Find your perfect escape ✦</div>
+    <svg width="240" height="200" viewBox="0 0 240 200" fill="none" style="margin-top:12px">
+      <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bfdbfe"/><stop offset="100%" stop-color="#e0f2fe"/></linearGradient></defs>
+      <rect width="240" height="200" rx="24" fill="url(#sky)"/>
+      <ellipse cx="52" cy="38" rx="28" ry="12" fill="white" opacity=".7"/>
+      <ellipse cx="74" cy="32" rx="20" ry="10" fill="white" opacity=".7"/>
+      <ellipse cx="182" cy="50" rx="22" ry="9" fill="white" opacity=".6"/>
+      <rect x="80" y="58" width="80" height="142" fill="#b0c8dc" rx="4"/>
+      <rect x="80" y="58" width="80" height="14" fill="#8fa8bc" rx="4"/>
+      <rect x="20" y="88" width="52" height="112" fill="#a8b8c8" rx="3"/>
+      <rect x="168" y="78" width="56" height="122" fill="#a0b2c4" rx="3"/>
+      <rect x="91" y="80" width="12" height="13" fill="#dbeafe" rx="2"/><rect x="109" y="80" width="12" height="13" fill="#dbeafe" rx="2"/>
+      <rect x="127" y="80" width="12" height="13" fill="#bfdbfe" rx="2"/><rect x="145" y="80" width="12" height="13" fill="#dbeafe" rx="2"/>
+      <rect x="91" y="102" width="12" height="13" fill="#bfdbfe" rx="2"/><rect x="109" y="102" width="12" height="13" fill="#dbeafe" rx="2"/>
+      <rect x="127" y="102" width="12" height="13" fill="#e0f2fe" rx="2"/><rect x="145" y="102" width="12" height="13" fill="#bfdbfe" rx="2"/>
+      <rect x="91" y="124" width="12" height="13" fill="#dbeafe" rx="2"/><rect x="109" y="124" width="12" height="13" fill="#bfdbfe" rx="2"/>
+      <rect x="127" y="124" width="12" height="13" fill="#dbeafe" rx="2"/><rect x="145" y="124" width="12" height="13" fill="#e0f2fe" rx="2"/>
+      <rect x="103" y="166" width="34" height="34" fill="#8fa8bc" rx="3"/>
+      <rect x="111" y="172" width="8" height="16" fill="#7a96ac" rx="1"/><rect x="121" y="172" width="8" height="16" fill="#7a96ac" rx="1"/>
+      <rect x="0" y="194" width="240" height="8" fill="#93c5fd" opacity=".4"/>
+      <circle cx="120" cy="54" r="10" fill="#0ea5e9"/><circle cx="120" cy="54" r="4" fill="white"/>
+      <line x1="120" y1="60" x2="120" y2="66" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="splash-buttons">
+    <button class="glass-btn glass-btn-primary" onclick="goTo('screen-signup')">✦ &nbsp; Create an Account</button>
+    <div class="splash-divider"><div class="splash-divider-line"></div><div class="splash-divider-text">already have one?</div><div class="splash-divider-line"></div></div>
+    <button class="glass-btn" onclick="goTo('screen-signin')">Sign In</button>
+  </div>
+</div>
+
+<!-- ═══ SIGN UP ═══ -->
+<div class="screen" id="screen-signup">
+  <div class="auth-header">
+    <button class="auth-back" onclick="goTo('screen-splash')">←</button>
+    <div class="auth-title">Create Account</div>
+    <div class="auth-subtitle">Join StayFinder and discover amazing stays 🏨</div>
+  </div>
+  <div class="auth-form">
+    <div class="input-wrap"><div class="input-label">Full Name</div><input class="glass-input" id="su-name" type="text" placeholder="e.g. Kumaran K" autocomplete="name"><div class="field-error" id="su-name-err">Please enter your name</div></div>
+    <div class="input-wrap"><div class="input-label">Email</div><input class="glass-input" id="su-email" type="email" placeholder="you@example.com" autocomplete="email"><div class="field-error" id="su-email-err">Enter a valid email</div></div>
+    <div class="input-wrap"><div class="input-label">Password</div><div class="input-eye"><input class="glass-input" id="su-pass" type="password" placeholder="Min 6 characters"><button class="eye-toggle" onclick="togglePass('su-pass',this)">👁️</button></div><div class="field-error" id="su-pass-err">Password must be at least 6 characters</div></div>
+    <div class="input-wrap"><div class="input-label">Confirm Password</div><div class="input-eye"><input class="glass-input" id="su-cpass" type="password" placeholder="Repeat password"><button class="eye-toggle" onclick="togglePass('su-cpass',this)">👁️</button></div><div class="field-error" id="su-cpass-err">Passwords do not match</div></div>
+  </div>
+  <button class="glass-btn glass-btn-primary" onclick="doSignup()">Create Account &nbsp;→</button>
+  <div class="auth-footer-text">Already have an account? <span class="auth-link" onclick="goTo('screen-signin')">Sign In</span></div>
+</div>
+
+<!-- ═══ SIGN IN ═══ -->
+<div class="screen" id="screen-signin">
+  <div class="auth-header">
+    <button class="auth-back" onclick="goTo('screen-splash')">←</button>
+    <div class="auth-title">Welcome back 👋</div>
+    <div class="auth-subtitle">Sign in to continue exploring</div>
+  </div>
+  <div class="auth-form">
+    <div class="input-wrap"><div class="input-label">Email</div><input class="glass-input" id="si-email" type="email" placeholder="you@example.com" autocomplete="email"><div class="field-error" id="si-email-err">Enter a valid email</div></div>
+    <div class="input-wrap"><div class="input-label">Password</div><div class="input-eye"><input class="glass-input" id="si-pass" type="password" placeholder="Your password"><button class="eye-toggle" onclick="togglePass('si-pass',this)">👁️</button></div><div class="field-error" id="si-pass-err">Incorrect email or password</div></div>
+  </div>
+  <button class="glass-btn glass-btn-primary" onclick="doSignin()">Sign In &nbsp;→</button>
+  <div class="auth-footer-text" style="margin-top:16px;">Don't have an account? <span class="auth-link" onclick="goTo('screen-signup')">Sign Up</span></div>
+</div>
+
+<!-- ═══ HOME ═══ -->
+<div class="screen" id="screen-home">
+  <div class="home-header">
+    <div class="avatar" id="home-avatar">K</div>
+    <div class="user-greeting"><div class="user-greeting-name" id="home-greeting">Hey there!</div><div class="user-greeting-loc">📍 Chennai, India</div></div>
+    <button class="notif-btn" onclick="goTo('screen-profile')">👤</button>
+  </div>
+
+  <!-- Category filter pills -->
+  <div class="cat-row">
+    <div class="cat-pill active" onclick="filterCat(this,'all')">🌍 All</div>
+    <div class="cat-pill" onclick="filterCat(this,'luxury')">👑 Luxury</div>
+    <div class="cat-pill" onclick="filterCat(this,'budget')">💰 Budget</div>
+    <div class="cat-pill" onclick="filterCat(this,'beach')">🏖️ Beach</div>
+    <div class="cat-pill" onclick="filterCat(this,'mountain')">🏔️ Mountain</div>
+    <div class="cat-pill" onclick="filterCat(this,'city')">🏙️ City</div>
+  </div>
+
+  <!-- Hero featured card -->
+  <div class="hero-card" onclick="openDetail(0)">
+    <div class="hero-card-img" style="background:linear-gradient(135deg,#ff9966,#ff5e62);">
+      <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
+        <rect x="30" y="20" width="60" height="80" fill="rgba(255,255,255,0.35)" rx="4"/>
+        <rect x="10" y="40" width="30" height="60" fill="rgba(255,255,255,0.28)" rx="3"/>
+        <rect x="80" y="35" width="35" height="65" fill="rgba(255,255,255,0.28)" rx="3"/>
+        <rect x="38" y="30" width="8" height="10" fill="rgba(255,255,255,0.5)" rx="1"/><rect x="52" y="30" width="8" height="10" fill="rgba(255,255,255,0.5)" rx="1"/><rect x="66" y="30" width="8" height="10" fill="rgba(255,255,255,0.5)" rx="1"/>
+        <rect x="38" y="48" width="8" height="10" fill="rgba(255,255,255,0.5)" rx="1"/><rect x="52" y="48" width="8" height="10" fill="rgba(255,255,255,0.5)" rx="1"/><rect x="66" y="48" width="8" height="10" fill="rgba(255,255,255,0.5)" rx="1"/>
+        <rect x="50" y="70" width="20" height="30" fill="rgba(0,0,0,0.15)" rx="2"/>
+      </svg>
+    </div>
+    <div class="hero-card-overlay">
+      <div class="hero-hotel-name">The Orange Hotel</div>
+      <div class="hero-rating"><span class="stars">★★★★★</span><span class="rating-val">4.7 · Featured</span></div>
+    </div>
+    <button class="fav-btn" id="fav-hero" onclick="event.stopPropagation();toggleSaveHero(this,0)">♡</button>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">Best Match</div>
+    <div class="see-all" onclick="goTo('screen-search')">See All</div>
+  </div>
+  <div class="cards-row" id="home-cards-row"></div>
+
+  <div class="section-header" style="margin-top:4px;">
+    <div class="section-title">Top Rated</div>
+    <div class="see-all" onclick="goTo('screen-search')">See All</div>
+  </div>
+  <div class="cards-row" id="home-top-row"></div>
+
+  <div class="pb-nav"></div>
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="switchNav('home')"><span class="icon">🏠</span>Home</button>
+    <button class="nav-btn" id="nav-search" onclick="switchNav('search')"><span class="icon">🔍</span>Search</button>
+    <button class="nav-center-btn" onclick="switchNav('search')">🔍</button>
+    <button class="nav-btn" id="nav-saved" onclick="switchNav('saved')"><span class="icon">❤️</span>Saved</button>
+    <button class="nav-btn" id="nav-profile" onclick="switchNav('profile')"><span class="icon">👤</span>Profile</button>
+  </div>
+</div>
+
+<!-- ═══ SEARCH ═══ -->
+<div class="screen" id="screen-search">
+  <div class="search-header">
+    <div class="search-title">Explore Hotels</div>
+    <div class="search-bar-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="glass-input" id="search-input" type="text" placeholder="Search by name or city…" oninput="doSearch()" autocomplete="off">
+      <button class="search-clear" id="search-clear-btn" onclick="clearSearch()">✕</button>
+    </div>
+    <div class="filter-row">
+      <div class="filter-chip active" onclick="setFilter(this,'all')">All</div>
+      <div class="filter-chip" onclick="setFilter(this,'luxury')">👑 Luxury</div>
+      <div class="filter-chip" onclick="setFilter(this,'budget')">💰 Budget</div>
+      <div class="filter-chip" onclick="setFilter(this,'beach')">🏖️ Beach</div>
+      <div class="filter-chip" onclick="setFilter(this,'mountain')">🏔️ Mountain</div>
+      <div class="filter-chip" onclick="setFilter(this,'city')">🏙️ City</div>
+    </div>
+  </div>
+  <div class="search-results-label" id="search-label">All Hotels (12)</div>
+  <div id="search-results"></div>
+  <div class="pb-nav"></div>
+  <div class="bottom-nav">
+    <button class="nav-btn" id="nav-home2" onclick="switchNav('home')"><span class="icon">🏠</span>Home</button>
+    <button class="nav-btn active" id="nav-search2" onclick="switchNav('search')"><span class="icon">🔍</span>Search</button>
+    <button class="nav-center-btn" onclick="switchNav('search')">🔍</button>
+    <button class="nav-btn" id="nav-saved2" onclick="switchNav('saved')"><span class="icon">❤️</span>Saved</button>
+    <button class="nav-btn" id="nav-profile2" onclick="switchNav('profile')"><span class="icon">👤</span>Profile</button>
+  </div>
+</div>
+
+<!-- ═══ SAVED ═══ -->
+<div class="screen" id="screen-saved">
+  <div class="saved-header">
+    <div class="saved-title">Saved Places ❤️</div>
+    <div class="saved-sub" id="saved-count-label">0 saved hotels</div>
+  </div>
+  <div id="saved-list"></div>
+  <div class="pb-nav"></div>
+  <div class="bottom-nav">
+    <button class="nav-btn" id="nav-home3" onclick="switchNav('home')"><span class="icon">🏠</span>Home</button>
+    <button class="nav-btn" id="nav-search3" onclick="switchNav('search')"><span class="icon">🔍</span>Search</button>
+    <button class="nav-center-btn" onclick="switchNav('search')">🔍</button>
+    <button class="nav-btn active" id="nav-saved3" onclick="switchNav('saved')"><span class="icon">❤️</span>Saved</button>
+    <button class="nav-btn" id="nav-profile3" onclick="switchNav('profile')"><span class="icon">👤</span>Profile</button>
+  </div>
+</div>
+
+<!-- ═══ PROFILE ═══ -->
+<div class="screen" id="screen-profile">
+  <div class="profile-header">
+    <div class="profile-avatar-big" id="profile-avatar-big">K</div>
+    <div class="profile-name" id="profile-name">User</div>
+    <div class="profile-email" id="profile-email">user@example.com</div>
+    <div class="profile-stats">
+      <div class="stat-card glass-card"><div class="stat-val" id="stat-saved">0</div><div class="stat-label">Saved</div></div>
+      <div class="stat-card glass-card"><div class="stat-val" id="stat-bookings">0</div><div class="stat-label">Bookings</div></div>
+      <div class="stat-card glass-card"><div class="stat-val" id="stat-reviews">0</div><div class="stat-label">Reviews</div></div>
+    </div>
+  </div>
+
+  <div class="profile-section-title">Recent Bookings</div>
+  <div id="booking-history-list"></div>
+
+  <div class="profile-section-title" style="margin-top:18px;">Account</div>
+  <div class="profile-menu-item" onclick="showToast('✏️ Edit profile — coming soon!')">
+    <div class="profile-menu-left"><div class="profile-menu-icon">✏️</div><div><div class="profile-menu-text">Edit Profile</div><div class="profile-menu-sub">Update your name &amp; photo</div></div></div>
+    <div class="profile-menu-arrow">›</div>
+  </div>
+  <div class="profile-menu-item" onclick="showToast('🔔 Notifications — coming soon!')">
+    <div class="profile-menu-left"><div class="profile-menu-icon">🔔</div><div><div class="profile-menu-text">Notifications</div><div class="profile-menu-sub">Manage alerts &amp; deals</div></div></div>
+    <div class="profile-menu-arrow">›</div>
+  </div>
+  <div class="profile-menu-item" onclick="showToast('🔒 Password changed!')">
+    <div class="profile-menu-left"><div class="profile-menu-icon">🔒</div><div><div class="profile-menu-text">Change Password</div><div class="profile-menu-sub">Keep your account secure</div></div></div>
+    <div class="profile-menu-arrow">›</div>
+  </div>
+  <div class="profile-menu-item" onclick="showToast('🌍 Currency set to INR ₹')">
+    <div class="profile-menu-left"><div class="profile-menu-icon">🌍</div><div><div class="profile-menu-text">Currency &amp; Language</div><div class="profile-menu-sub">INR · English</div></div></div>
+    <div class="profile-menu-arrow">›</div>
+  </div>
+  <div class="profile-menu-item profile-logout-btn" onclick="doLogout()">
+    <div class="profile-menu-left"><div class="profile-menu-icon">🚪</div><div><div class="profile-menu-text" style="color:#ef4444;">Sign Out</div><div class="profile-menu-sub">See you next time</div></div></div>
+    <div class="profile-menu-arrow">›</div>
+  </div>
+
+  <div class="pb-nav"></div>
+  <div class="bottom-nav">
+    <button class="nav-btn" id="nav-home4" onclick="switchNav('home')"><span class="icon">🏠</span>Home</button>
+    <button class="nav-btn" id="nav-search4" onclick="switchNav('search')"><span class="icon">🔍</span>Search</button>
+    <button class="nav-center-btn" onclick="switchNav('search')">🔍</button>
+    <button class="nav-btn" id="nav-saved4" onclick="switchNav('saved')"><span class="icon">❤️</span>Saved</button>
+    <button class="nav-btn active" id="nav-profile4" onclick="switchNav('profile')"><span class="icon">👤</span>Profile</button>
+  </div>
+</div>
+
+<!-- ═══ DETAIL ═══ -->
+<div class="screen" id="screen-detail">
+  <div class="detail-hero" id="detail-hero-bg">
+    <svg width="200" height="160" viewBox="0 0 200 160" fill="none">
+      <rect width="200" height="160" fill="#d0dce8"/>
+      <rect x="20" y="30" width="160" height="130" fill="#c8d8e8" rx="4"/>
+      <rect x="20" y="30" width="160" height="18" fill="#b8c8d8" rx="4"/>
+      <rect x="0" y="58" width="55" height="102" fill="#bfcfdf" rx="3"/>
+      <rect x="145" y="48" width="55" height="112" fill="#b8c8d8" rx="3"/>
+      <rect x="35" y="54" width="11" height="14" fill="#e0eef8" rx="2"/><rect x="54" y="54" width="11" height="14" fill="#e8f2fa" rx="2"/>
+      <rect x="73" y="54" width="11" height="14" fill="#e0eef8" rx="2"/><rect x="92" y="54" width="11" height="14" fill="#eef6fc" rx="2"/>
+      <rect x="111" y="54" width="11" height="14" fill="#e0eef8" rx="2"/><rect x="130" y="54" width="11" height="14" fill="#e8f2fa" rx="2"/>
+      <rect x="35" y="76" width="11" height="14" fill="#e0eef8" rx="2"/><rect x="54" y="76" width="11" height="14" fill="#eef6fc" rx="2"/>
+      <rect x="73" y="76" width="11" height="14" fill="#e0eef8" rx="2"/><rect x="92" y="76" width="11" height="14" fill="#e0eef8" rx="2"/>
+      <rect x="80" y="120" width="40" height="40" fill="#b8c8d8" rx="3"/>
+      <rect x="88" y="125" width="10" height="20" fill="#a0b0c0" rx="1"/><rect x="102" y="125" width="10" height="20" fill="#a0b0c0" rx="1"/>
+    </svg>
+    <button class="detail-back-btn" onclick="goBackFromDetail()">←</button>
+    <button class="detail-save-btn" id="detail-save-btn" onclick="toggleSaveDetail()">♡</button>
+  </div>
+  <div class="detail-tabs">
+    <button class="detail-tab active" onclick="switchDetailTab(this,'tab-details')">Details</button>
+    <button class="detail-tab" onclick="switchDetailTab(this,'tab-reviews')">Reviews</button>
+    <button class="detail-tab" onclick="goTo('screen-map')">Live Map</button>
+  </div>
+  <div class="detail-body">
+    <div id="tab-details">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+        <div><div class="detail-hotel-name" id="d-name">Hotel Name</div><div class="detail-location" id="d-loc">📍 Location</div></div>
+        <div style="text-align:right;"><div style="display:flex;align-items:baseline;gap:4px;justify-content:flex-end;"><div class="detail-price" id="d-price">$0</div><div class="detail-price-sub">/night</div></div></div>
+      </div>
+      <div class="detail-guests">
+        <div class="guest-avatar ga1">A</div><div class="guest-avatar ga2">J</div><div class="guest-avatar ga3">M</div>
+        <span class="guest-count" id="d-interest">+3 interested</span>
+      </div>
+      <div class="detail-stars"><span class="star-icons" id="d-stars">★★★★★</span><span class="rating-text" id="d-rating">4.5</span><span class="reviews" id="d-reviews-count">(100)</span></div>
+      <div class="amenities-row" id="d-amenities"></div>
+      <div class="detail-desc-title">Description</div>
+      <div class="detail-desc-text" id="d-desc">Description here.</div>
+    </div>
+    <div id="tab-reviews" style="display:none;">
+      <div class="reviews-section"><div class="reviews-title" id="d-reviews-title">Reviews</div><div id="d-reviews-list"></div></div>
+    </div>
+  </div>
+  <div class="swipe-btn-container">
+    <button class="glass-btn glass-btn-dark" onclick="doBook()">Book Now &nbsp;→</button>
+  </div>
+</div>
+
+<!-- ═══ MAP ═══ -->
+<div class="screen" id="screen-map">
+  <div class="map-header">
+    <button class="notif-btn" onclick="goTo('screen-detail')">←</button>
+    <div class="map-title" id="map-hotel-name">Location</div>
+    <button class="notif-btn">🔖</button>
+  </div>
+  <div class="map-area">
+    <svg width="100%" height="100%" viewBox="0 0 380 235">
+      <rect width="380" height="235" fill="#e8f0e0"/>
+      <line x1="0" y1="117" x2="380" y2="117" stroke="#fff" stroke-width="10"/>
+      <line x1="190" y1="0" x2="190" y2="235" stroke="#fff" stroke-width="10"/>
+      <line x1="0" y1="58" x2="380" y2="58" stroke="#f0f0e8" stroke-width="6"/>
+      <line x1="0" y1="175" x2="380" y2="175" stroke="#f0f0e8" stroke-width="6"/>
+      <line x1="95" y1="0" x2="95" y2="235" stroke="#f0f0e8" stroke-width="6"/>
+      <line x1="285" y1="0" x2="285" y2="235" stroke="#f0f0e8" stroke-width="6"/>
+      <rect x="10" y="10" width="70" height="38" fill="#d0dcc8" rx="4"/><rect x="100" y="10" width="80" height="38" fill="#d0dcc8" rx="4"/>
+      <rect x="200" y="10" width="70" height="38" fill="#d0dcc8" rx="4"/><rect x="10" y="68" width="70" height="38" fill="#d0dcc8" rx="4"/>
+      <rect x="200" y="68" width="70" height="38" fill="#c8d8c0" rx="4"/><rect x="100" y="127" width="80" height="38" fill="#d0dcc8" rx="4"/>
+      <rect x="200" y="127" width="70" height="38" fill="#d0dcc8" rx="4"/><rect x="10" y="127" width="70" height="38" fill="#d8dcd0" rx="4"/>
+      <rect x="295" y="68" width="75" height="38" fill="#d8e4d0" rx="4"/><rect x="295" y="127" width="75" height="38" fill="#d0dcc8" rx="4"/>
+      <path d="M100 117 Q140 88 190 78 Q240 68 260 117" stroke="#0ea5e9" stroke-width="4" fill="none" stroke-dasharray="8,4" stroke-linecap="round"/>
+      <circle cx="260" cy="117" r="14" fill="#0ea5e9" opacity=".22"/><circle cx="260" cy="117" r="8" fill="#0ea5e9"/><circle cx="260" cy="117" r="3.5" fill="white"/>
+      <circle cx="100" cy="117" r="10" fill="#0f172a" opacity=".8"/><circle cx="100" cy="117" r="3.5" fill="white"/>
+    </svg>
+  </div>
+  <div class="map-info-cards">
+    <div class="map-info-card glass-card"><div class="map-info-icon">📍</div><div><div class="map-info-val" id="map-dist">7.9 KM</div><div class="map-info-label">Distance</div></div></div>
+    <div class="map-info-card glass-card"><div class="map-info-icon">⏱️</div><div><div class="map-info-val" id="map-time">15 MIN</div><div class="map-info-label">Drive time</div></div></div>
+  </div>
+  <div class="invite-section">
+    <div class="invite-title">Your Travel Group</div>
+    <div class="invite-row">
+      <div class="invite-avatars">
+        <div class="guest-avatar ga1" style="margin-right:-10px;">A</div>
+        <div class="guest-avatar ga2" style="margin-right:-10px;background:#8b5cf6;">J</div>
+        <div class="guest-avatar ga3" style="background:#f59e0b;">M</div>
+      </div>
+      <div class="invite-status">✓ INVITED</div>
+    </div>
+  </div>
+  <div class="pb-nav"></div>
+  <div class="map-swipe-btn-container">
+    <button class="glass-btn glass-btn-primary" onclick="doBook()">Confirm Booking &nbsp;→</button>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════
+   HOTEL DATA
+═══════════════════════════ */
+var HOTELS = [
+  {id:0, name:'The Orange Hotel', loc:'Mumbai, India', price:78, rating:4.7, reviews:421, tag:'luxury', emoji:'🏛️', interest:'+12 interested',
+   amenities:['🏊 Pool','📶 WiFi','🍳 Breakfast','🅿️ Parking','🏋️ Gym'],
+   desc:'A stunning luxury property in the heart of Mumbai. The Orange Hotel blends Art Deco heritage with modern amenities. Panoramic sea views, a rooftop pool, and a Michelin-starred restaurant make every stay unforgettable.',
+   dist:'7.9 KM', time:'15 MIN',
+   reviewList:[{user:'Priya R',color:'#f97316',date:'Mar 2026',stars:5,text:'Absolutely stunning! The rooftop pool is to die for. Service was impeccable.'},
+               {user:'James K',color:'#6366f1',date:'Feb 2026',stars:4,text:'Beautiful property, great location. Breakfast spread was incredible.'},
+               {user:'Meena S',color:'#14b8a6',date:'Jan 2026',stars:5,text:'Best stay in Mumbai. Will definitely return!'}]},
+  {id:1, name:'The Cube Hotel', loc:'Los Angeles, USA', price:76, rating:4.3, reviews:215, tag:'city', emoji:'🏢', interest:'+8 interested',
+   amenities:['📶 WiFi','🅿️ Parking','☕ Coffee'],
+   desc:'Minimalist design meets urban living at The Cube Hotel. Located steps from downtown LA, this boutique property is perfect for business travelers and city explorers alike.',
+   dist:'3.2 KM', time:'8 MIN',
+   reviewList:[{user:'Carlos M',color:'#f59e0b',date:'Mar 2026',stars:4,text:'Clean, modern, well-located. Good value for LA.'},
+               {user:'Sofia L',color:'#8b5cf6',date:'Feb 2026',stars:4,text:'Stylish interiors, helpful staff. Parking was easy.'}]},
+  {id:2, name:'Ocean View Suite', loc:'Maldives', price:320, rating:4.9, reviews:876, tag:'beach', emoji:'🌊', interest:'+34 interested',
+   amenities:['🏊 Pool','🤿 Diving','🍹 Bar','🛥️ Speedboat','🌅 Sunset View'],
+   desc:'Overwater bungalows perched above the crystal-clear Indian Ocean. Wake up to turquoise waters, enjoy a private plunge pool, and watch manta rays glide beneath your glass floor.',
+   dist:'12.0 KM', time:'25 MIN',
+   reviewList:[{user:'Tanaka Y',color:'#ec4899',date:'Mar 2026',stars:5,text:'Heaven on earth. The underwater room was surreal!'},
+               {user:'Rachel T',color:'#0ea5e9',date:'Mar 2026',stars:5,text:'Worth every penny. Perfect honeymoon spot.'}]},
+  {id:3, name:'Green Palace', loc:'Wayanad, Kerala', price:63, rating:4.1, reviews:134, tag:'mountain', emoji:'🌿', interest:'+5 interested',
+   amenities:['🌿 Nature Trails','🍃 Spa','🍳 Breakfast','📶 WiFi'],
+   desc:'Nestled in the misty hills of Wayanad, Green Palace is a forest retreat unlike any other. Wake to birdsong, trek through tea estates, and unwind with Ayurvedic treatments.',
+   dist:'2.1 KM', time:'5 MIN',
+   reviewList:[{user:'Ananya B',color:'#22c55e',date:'Feb 2026',stars:4,text:'So peaceful and green! The Ayurvedic spa was amazing.'},
+               {user:'Rahul P',color:'#f97316',date:'Jan 2026',stars:4,text:'Perfect weekend getaway from the city noise.'}]},
+  {id:4, name:'Skyline Tower', loc:'Dubai, UAE', price:245, rating:4.8, reviews:654, tag:'luxury', emoji:'🗼', interest:'+22 interested',
+   amenities:['🏊 Infinity Pool','🍽️ Fine Dining','🛎️ Butler','🏋️ Gym','🚁 Helipad'],
+   desc:'Stay among the clouds at Skyline Tower, Dubai\'s most celebrated luxury address. 80 floors of opulence with sweeping views of the Burj Khalifa, a sky-high infinity pool, and a 24-hour butler service.',
+   dist:'5.6 KM', time:'12 MIN',
+   reviewList:[{user:'Omar A',color:'#f59e0b',date:'Mar 2026',stars:5,text:'The infinity pool view is just insane. Best hotel I\'ve ever stayed in.'},
+               {user:'Elena V',color:'#6366f1',date:'Mar 2026',stars:5,text:'Service is out of this world. The butler anticipated everything.'}]},
+  {id:5, name:'Harbor Lights Inn', loc:'Goa, India', price:55, rating:4.0, reviews:98, tag:'beach', emoji:'⚓', interest:'+6 interested',
+   amenities:['🏖️ Beach Access','🍹 Bar','🛵 Scooter Rental','📶 WiFi'],
+   desc:'A charming, colourful Portuguese-style inn right on Goa\'s most beautiful stretch of beach. Sip on cold beers at the sunset bar and fall asleep to the sound of waves.',
+   dist:'0.3 KM', time:'2 MIN',
+   reviewList:[{user:'Arjun D',color:'#0ea5e9',date:'Feb 2026',stars:4,text:'Loved the vibe! Beach is literally outside your door.'},
+               {user:'Nadia R',color:'#ec4899',date:'Jan 2026',stars:3,text:'Great location, rooms could be cleaner. Good price though.'}]},
+  {id:6, name:'Alpine Nest', loc:'Manali, Himachal Pradesh', price:89, rating:4.5, reviews:307, tag:'mountain', emoji:'🏔️', interest:'+11 interested',
+   amenities:['🔥 Fireplace','❄️ Snow View','🍵 Tea Service','🧘 Yoga Deck'],
+   desc:'A cozy wooden cabin resort wrapped in snow and pine forests. Alpine Nest offers fire-lit evenings, fresh mountain air, and spectacular views of the Rohtang Pass from every room.',
+   dist:'1.8 KM', time:'6 MIN',
+   reviewList:[{user:'Vikram S',color:'#a855f7',date:'Feb 2026',stars:5,text:'Woke up to fresh snow on the mountains. Pure magic!'},
+               {user:'Divya M',color:'#f97316',date:'Jan 2026',stars:4,text:'Fireplace room was so cozy. Loved the yoga deck.'}]},
+  {id:7, name:'Metro Grand', loc:'New Delhi, India', price:112, rating:4.4, reviews:489, tag:'city', emoji:'🌆', interest:'+9 interested',
+   amenities:['🍽️ Restaurant','🏋️ Gym','💼 Business Center','🚗 Airport Transfer','📶 WiFi'],
+   desc:'The definitive business and leisure hotel in the capital. Metro Grand offers sleek modern rooms, a rooftop restaurant with views of India Gate, and seamless connectivity to the metro.',
+   dist:'4.5 KM', time:'11 MIN',
+   reviewList:[{user:'Simran K',color:'#14b8a6',date:'Mar 2026',stars:4,text:'Perfect base for exploring Delhi. Room service was quick.'},
+               {user:'Ahmed F',color:'#6366f1',date:'Feb 2026',stars:4,text:'Great business facilities. The rooftop view at night is beautiful.'}]},
+  {id:8, name:'Pebble Cove Resort', loc:'Andaman Islands', price:175, rating:4.6, reviews:265, tag:'beach', emoji:'🐠', interest:'+18 interested',
+   amenities:['🤿 Snorkeling','🚤 Boat Trips','🏊 Pool','🌴 Beach Bar','🐠 Coral Reef'],
+   desc:'Surrounded by translucent waters of the Andaman Sea, Pebble Cove offers a barefoot luxury experience. World-class snorkeling, bioluminescent night swims, and sunsets that last forever.',
+   dist:'8.3 KM', time:'20 MIN',
+   reviewList:[{user:'Leila A',color:'#0ea5e9',date:'Mar 2026',stars:5,text:'The bioluminescent swim was life-changing!'},
+               {user:'Tom B',color:'#22c55e',date:'Feb 2026',stars:5,text:'Best beach resort in India, hands down.'}]},
+  {id:9, name:'The Dune Retreat', loc:'Jaisalmer, Rajasthan', price:95, rating:4.3, reviews:182, tag:'budget', emoji:'🏜️', interest:'+7 interested',
+   amenities:['🐪 Camel Safari','🌌 Stargazing','🪘 Folk Music','🍛 Rajasthani Cuisine'],
+   desc:'Sleep under a billion stars in a luxury desert camp. The Dune Retreat offers authentic Rajasthani hospitality, camel safaris across golden dunes, and magical evenings with folk dancers.',
+   dist:'18 KM', time:'35 MIN',
+   reviewList:[{user:'Preethi N',color:'#f59e0b',date:'Feb 2026',stars:5,text:'The stargazing session was breathtaking. So quiet out there!'},
+               {user:'Matt W',color:'#8b5cf6',date:'Jan 2026',stars:4,text:'Unique experience! Camel ride at sunset was unforgettable.'}]},
+  {id:10, name:'Zen Garden Hotel', loc:'Kyoto, Japan', price:198, rating:4.7, reviews:531, tag:'luxury', emoji:'🌸', interest:'+15 interested',
+   amenities:['🌸 Garden','♨️ Onsen','🍵 Tea Ceremony','🎋 Bamboo Forest','🧖 Spa'],
+   desc:'A traditional ryokan nestled within a private bamboo garden in Kyoto\'s Higashiyama district. Futon beds, tatami rooms, an outdoor onsen, and the serene ritual of Japanese hospitality.',
+   dist:'6.2 KM', time:'14 MIN',
+   reviewList:[{user:'Yuki H',color:'#ec4899',date:'Mar 2026',stars:5,text:'The onsen under cherry blossoms is something I\'ll never forget.'},
+               {user:'Claudia M',color:'#14b8a6',date:'Feb 2026',stars:5,text:'Authentic ryokan experience. Tea ceremony was a highlight!'}]},
+  {id:11, name:'Budget Bay Hostel', loc:'Pondicherry, India', price:18, rating:3.8, reviews:72, tag:'budget', emoji:'🏠', interest:'+3 interested',
+   amenities:['📶 WiFi','☕ Free Coffee','🛵 Rentals','🎲 Game Room'],
+   desc:'The best budget stay on the French Riviera of India. Clean dorms and private rooms, free breakfast coffee, and the friendliest backpacker crowd you\'ll find.',
+   dist:'0.8 KM', time:'3 MIN',
+   reviewList:[{user:'Leo G',color:'#f97316',date:'Feb 2026',stars:4,text:'Great social vibe. Met so many cool travellers here.'},
+               {user:'Isha V',color:'#6366f1',date:'Jan 2026',stars:3,text:'Good location, very affordable. Rooms are basic but clean.'}]}
+];
+
+/* ═══════════════════════════
+   STORAGE
+═══════════════════════════ */
+var DB='sf_users', SS='sf_session', SAVED_KEY='sf_saved', BOOKINGS_KEY='sf_bookings';
+function getUsers(){try{return JSON.parse(localStorage.getItem(DB))||{};}catch(e){return{};}}
+function saveUsers(u){localStorage.setItem(DB,JSON.stringify(u));}
+function getSession(){try{return JSON.parse(localStorage.getItem(SS));}catch(e){return null;}}
+function setSession(u){localStorage.setItem(SS,JSON.stringify(u));}
+function clearSession(){localStorage.removeItem(SS);}
+function getSaved(){try{return JSON.parse(localStorage.getItem(SAVED_KEY))||[];}catch(e){return[];}}
+function setSaved(a){localStorage.setItem(SAVED_KEY,JSON.stringify(a));}
+function getBookings(){try{return JSON.parse(localStorage.getItem(BOOKINGS_KEY))||[];}catch(e){return[];}}
+function setBookings(a){localStorage.setItem(BOOKINGS_KEY,JSON.stringify(a));}
+
+/* ═══════════════════════════
+   STATE
+═══════════════════════════ */
+var currentHotelId = 0;
+var prevScreen = 'screen-home';
+var searchFilter = 'all';
+
+/* ═══════════════════════════
+   NAVIGATION
+═══════════════════════════ */
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function switchNav(tab){
+  var map = {home:'screen-home', search:'screen-search', saved:'screen-saved', profile:'screen-profile'};
+  if(tab==='saved') renderSaved();
+  if(tab==='profile') renderProfile();
+  if(tab==='search'){renderSearchResults(); renderSearchResults();}
+  goTo(map[tab]);
+}
+
+function goBackFromDetail(){
+  goTo(prevScreen);
+}
+
+/* ═══════════════════════════
+   BOOT
+═══════════════════════════ */
+window.addEventListener('DOMContentLoaded', function(){
+  var s = getSession();
+  if(s){ loadHome(s); goTo('screen-home'); }
+  renderHomeCards();
+  renderSearchResults();
+});
+
+/* ═══════════════════════════
+   AUTH
+═══════════════════════════ */
+function showErr(id,show){var el=document.getElementById(id);if(el)el.classList.toggle('visible',show);}
+function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
+
+function doSignup(){
+  var name=document.getElementById('su-name').value.trim();
+  var email=document.getElementById('su-email').value.trim().toLowerCase();
+  var pass=document.getElementById('su-pass').value;
+  var cpass=document.getElementById('su-cpass').value;
+  var ok=true;
+  showErr('su-name-err',!name); if(!name)ok=false;
+  showErr('su-email-err',!isEmail(email)); if(!isEmail(email))ok=false;
+  showErr('su-pass-err',pass.length<6); if(pass.length<6)ok=false;
+  showErr('su-cpass-err',pass!==cpass); if(pass!==cpass)ok=false;
+  if(!ok)return;
+  var users=getUsers();
+  if(users[email]){showToast('⚠️ Email already registered!');return;}
+  users[email]={name:name,email:email,pass:pass};
+  saveUsers(users);
+  var user={name:name,email:email};
+  setSession(user); loadHome(user);
+  showToast('🎉 Welcome, '+name.split(' ')[0]+'!');
+  renderHomeCards();
+  goTo('screen-home');
+}
+
+function doSignin(){
+  var email=document.getElementById('si-email').value.trim().toLowerCase();
+  var pass=document.getElementById('si-pass').value;
+  showErr('si-email-err',false); showErr('si-pass-err',false);
+  if(!isEmail(email)){showErr('si-email-err',true);return;}
+  var users=getUsers(); var user=users[email];
+  if(!user||user.pass!==pass){showErr('si-pass-err',true);return;}
+  var session={name:user.name,email:user.email};
+  setSession(session); loadHome(session);
+  showToast('👋 Welcome back, '+user.name.split(' ')[0]+'!');
+  renderHomeCards();
+  goTo('screen-home');
+}
+
+function loadHome(user){
+  var first=user.name?user.name.split(' ')[0]:'there';
+  var initial=first.charAt(0).toUpperCase();
+  var el=document.getElementById('home-greeting'); if(el)el.textContent='Hey, '+first+'!';
+  var av=document.getElementById('home-avatar'); if(av)av.textContent=initial;
+}
+
+function doLogout(){
+  clearSession(); showToast('See you soon! 👋');
+  setTimeout(function(){goTo('screen-splash');},700);
+}
+
+/* ═══════════════════════════
+   HOME CARDS RENDER
+═══════════════════════════ */
+function renderHomeCards(){
+  var bestMatch = [1,2,3,4,5,6]; // indices
+  var topRated  = [0,4,2,7,10,8];
+  renderRow('home-cards-row', bestMatch);
+  renderRow('home-top-row', topRated);
+  syncHeroFav();
+}
+
+function renderRow(containerId, ids){
+  var saved = getSaved();
+  var container = document.getElementById(containerId);
+  if(!container) return;
+  var html = '';
+  ids.forEach(function(id){
+    var h = HOTELS[id];
+    if(!h) return;
+    var isSaved = saved.indexOf(id) !== -1;
+    html += '<div class="hotel-card-sm" onclick="openDetail('+id+')">'
+      +'<div class="hotel-card-sm-img '+getImgClass(id)+'">'
+      + h.emoji
+      +'<button class="sm-save-btn" id="sm-save-'+containerId+'-'+id+'" onclick="event.stopPropagation();toggleSave('+id+',\''+containerId+'\')">'
+      +(isSaved?'❤️':'🤍')+'</button></div>'
+      +'<div class="hotel-card-sm-body">'
+      +'<div class="hotel-card-sm-name">'+h.name+'</div>'
+      +'<div class="hotel-card-sm-row">'
+      +'<div class="hotel-card-sm-price">$'+h.price+'<span style="font-size:10px;color:var(--grey)">/night</span></div>'
+      +'<div class="hotel-card-sm-rating">★ '+h.rating+'</div>'
+      +'</div></div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function getImgClass(id){
+  var classes=['img1','img2','img3','img4','img5','img6','img7','img8'];
+  return classes[id % classes.length];
+}
+
+/* category filter on home */
+var currentHomeCat = 'all';
+function filterCat(el, cat){
+  currentHomeCat = cat;
+  document.querySelectorAll('#screen-home .cat-pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active');
+  var ids;
+  if(cat==='all')       ids=[1,2,3,4,5,6];
+  else if(cat==='luxury') ids=HOTELS.filter(function(h){return h.tag==='luxury';}).map(function(h){return h.id;}).slice(0,6);
+  else if(cat==='budget') ids=HOTELS.filter(function(h){return h.tag==='budget';}).map(function(h){return h.id;}).slice(0,6);
+  else ids=HOTELS.filter(function(h){return h.tag===cat;}).map(function(h){return h.id;}).slice(0,6);
+  if(ids.length===0) ids=[0,1,2];
+  renderRow('home-cards-row', ids);
+}
+
+/* ═══════════════════════════
+   DETAIL SCREEN
+═══════════════════════════ */
+function openDetail(id){
+  currentHotelId = id;
+  var active = document.querySelector('.screen.active');
+  prevScreen = active ? active.id : 'screen-home';
+  var h = HOTELS[id];
+  if(!h) return;
+  document.getElementById('d-name').textContent = h.name;
+  document.getElementById('d-loc').textContent = '📍 '+h.loc;
+  document.getElementById('d-price').textContent = '$'+h.price;
+  document.getElementById('d-interest').textContent = h.interest;
+  document.getElementById('d-rating').textContent = h.rating;
+  document.getElementById('d-reviews-count').textContent = '('+h.reviews+' reviews)';
+  document.getElementById('d-desc').textContent = h.desc;
+  document.getElementById('d-stars').textContent = ratingToStars(h.rating);
+  document.getElementById('map-hotel-name').textContent = h.name;
+  document.getElementById('map-dist').textContent = h.dist;
+  document.getElementById('map-time').textContent = h.time;
+
+  // amenities
+  var amHtml = '';
+  h.amenities.forEach(function(a){ amHtml += '<div class="amenity-chip">'+a+'</div>'; });
+  document.getElementById('d-amenities').innerHTML = amHtml;
+
+  // reviews
+  document.getElementById('d-reviews-title').textContent = 'Reviews ('+h.reviews+')';
+  var revHtml = '';
+  h.reviewList.forEach(function(r){
+    revHtml += '<div class="review-card">'
+      +'<div class="review-header"><div class="review-user">'
+      +'<div class="review-avatar" style="background:'+r.color+';">'+r.user.charAt(0)+'</div>'
+      +'<div><div class="review-name">'+r.user+'</div><div class="review-date">'+r.date+'</div></div>'
+      +'</div><div class="review-stars">'+ratingToStars(r.stars)+'</div></div>'
+      +'<div class="review-text">'+r.text+'</div></div>';
+  });
+  document.getElementById('d-reviews-list').innerHTML = revHtml;
+
+  // sync save button
+  var saved = getSaved();
+  var saveBtn = document.getElementById('detail-save-btn');
+  if(saveBtn){ saveBtn.textContent = saved.indexOf(id)!==-1 ? '❤️' : '♡'; }
+
+  // reset tabs
+  document.getElementById('tab-details').style.display = '';
+  document.getElementById('tab-reviews').style.display = 'none';
+  document.querySelectorAll('.detail-tab').forEach(function(t,i){t.classList.toggle('active',i===0);});
+
+  goTo('screen-detail');
+}
+
+function ratingToStars(r){
+  var full = Math.floor(r);
+  var s = '';
+  for(var i=0;i<5;i++) s += i<full?'★':'☆';
+  return s;
+}
+
+function switchDetailTab(btn, tabId){
+  document.querySelectorAll('.detail-tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('tab-details').style.display = tabId==='tab-details'?'':'none';
+  document.getElementById('tab-reviews').style.display = tabId==='tab-reviews'?'':'none';
+}
+
+/* ═══════════════════════════
+   SAVE / UNSAVE
+═══════════════════════════ */
+function toggleSave(id, rowId){
+  var saved = getSaved();
+  var idx = saved.indexOf(id);
+  if(idx===-1){ saved.push(id); showToast('❤️ Saved "'+HOTELS[id].name+'"'); }
+  else { saved.splice(idx,1); showToast('Removed from saved'); }
+  setSaved(saved);
+  // update small card button
+  var btn = document.getElementById('sm-save-'+rowId+'-'+id);
+  if(btn) btn.textContent = saved.indexOf(id)!==-1 ? '❤️' : '🤍';
+  // update hero fav if needed
+  if(id===0) syncHeroFav();
+  // update detail save if open
+  if(currentHotelId===id){
+    var sb = document.getElementById('detail-save-btn');
+    if(sb) sb.textContent = saved.indexOf(id)!==-1 ? '❤️' : '♡';
+  }
+}
+
+function toggleSaveDetail(){
+  var saved = getSaved();
+  var id = currentHotelId;
+  var idx = saved.indexOf(id);
+  if(idx===-1){ saved.push(id); showToast('❤️ Saved "'+HOTELS[id].name+'"'); }
+  else { saved.splice(idx,1); showToast('Removed from saved'); }
+  setSaved(saved);
+  var sb = document.getElementById('detail-save-btn');
+  if(sb) sb.textContent = saved.indexOf(id)!==-1 ? '❤️' : '♡';
+  // refresh home rows
+  renderHomeCards();
+}
+
+function toggleSaveHero(btn, id){
+  toggleSave(id, 'hero');
+  syncHeroFav();
+}
+
+function syncHeroFav(){
+  var saved = getSaved();
+  var btn = document.getElementById('fav-hero');
+  if(btn){ btn.textContent = saved.indexOf(0)!==-1 ? '♥' : '♡'; btn.style.color = saved.indexOf(0)!==-1 ? '#ff4757':'white'; }
+}
+
+/* ═══════════════════════════
+   SAVED SCREEN
+═══════════════════════════ */
+function renderSaved(){
+  var saved = getSaved();
+  var lbl = document.getElementById('saved-count-label');
+  if(lbl) lbl.textContent = saved.length + (saved.length===1?' saved hotel':' saved hotels');
+  var list = document.getElementById('saved-list');
+  if(!list) return;
+  if(saved.length===0){
+    list.innerHTML='<div class="saved-empty"><div class="empty-icon">💔</div><p>No saved hotels yet.<br>Tap ❤️ on any hotel to save it here.</p></div>';
+    return;
+  }
+  var html='';
+  saved.forEach(function(id){
+    var h=HOTELS[id]; if(!h)return;
+    html+='<div class="saved-card" onclick="openDetail('+id+')">'
+      +'<div class="saved-card-img '+getImgClass(id)+'">'+h.emoji+'</div>'
+      +'<div class="saved-card-info">'
+      +'<div class="saved-card-name">'+h.name+'</div>'
+      +'<div class="saved-card-loc">📍 '+h.loc+'</div>'
+      +'<div class="saved-card-row">'
+      +'<div class="saved-card-price">$'+h.price+'<span style="font-size:10px;color:var(--grey)">/night</span></div>'
+      +'<div class="saved-card-rating">★ '+h.rating+'</div>'
+      +'</div></div>'
+      +'<button class="saved-remove-btn" onclick="event.stopPropagation();removeSaved('+id+')">✕</button>'
+      +'</div>';
+  });
+  list.innerHTML=html;
+}
+
+function removeSaved(id){
+  var saved=getSaved();
+  var idx=saved.indexOf(id);
+  if(idx!==-1){saved.splice(idx,1);setSaved(saved);}
+  showToast('Removed "'+HOTELS[id].name+'"');
+  renderSaved();
+  renderHomeCards();
+}
+
+/* ═══════════════════════════
+   BOOKING
+═══════════════════════════ */
+function doBook(){
+  var h = HOTELS[currentHotelId];
+  if(!h) return;
+  var bookings = getBookings();
+  var already = bookings.filter(function(b){return b.id===h.id;});
+  if(already.length>0){ showToast('📋 Already booked '+h.name+'!'); return; }
+  var now = new Date();
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dateStr = months[now.getMonth()]+' '+now.getDate()+', '+(now.getFullYear());
+  var checkIn = new Date(now.getTime()+7*24*60*60*1000);
+  var checkInStr = months[checkIn.getMonth()]+' '+checkIn.getDate();
+  bookings.push({id:h.id, name:h.name, loc:h.loc, price:h.price, bookedOn:dateStr, checkIn:checkInStr, nights:3, status:'upcoming'});
+  setBookings(bookings);
+  showToast('🎉 Booked '+h.name+' for $'+h.price*3+'!');
+  setTimeout(function(){goTo('screen-home');},1200);
+}
+
+/* ═══════════════════════════
+   PROFILE
+═══════════════════════════ */
+function renderProfile(){
+  var session = getSession();
+  if(!session) return;
+  var first = session.name.split(' ')[0];
+  var initial = first.charAt(0).toUpperCase();
+  var av = document.getElementById('profile-avatar-big'); if(av) av.textContent=initial;
+  var nm = document.getElementById('profile-name'); if(nm) nm.textContent=session.name;
+  var em = document.getElementById('profile-email'); if(em) em.textContent=session.email;
+  var saved = getSaved();
+  var bookings = getBookings();
+  var ss = document.getElementById('stat-saved'); if(ss) ss.textContent=saved.length;
+  var sb = document.getElementById('stat-bookings'); if(sb) sb.textContent=bookings.length;
+  var sr = document.getElementById('stat-reviews'); if(sr) sr.textContent=Math.min(bookings.length*2,bookings.length+3);
+  renderBookingHistory(bookings);
+}
+
+function renderBookingHistory(bookings){
+  var list = document.getElementById('booking-history-list');
+  if(!list) return;
+  if(bookings.length===0){
+    list.innerHTML='<div style="font-size:13px;color:var(--grey);padding:10px 0 18px;">No bookings yet. Start exploring!</div>';
+    return;
+  }
+  var html='';
+  bookings.slice().reverse().slice(0,4).forEach(function(b){
+    html+='<div class="booking-card">'
+      +'<div class="booking-header">'
+      +'<div class="booking-hotel">'+b.name+'</div>'
+      +'<div class="booking-status status-'+b.status+'">'+b.status.charAt(0).toUpperCase()+b.status.slice(1)+'</div>'
+      +'</div>'
+      +'<div class="booking-detail">'
+      +'<span>📍 '+b.loc+'</span>'
+      +'<span>🗓️ Check-in: '+b.checkIn+'</span>'
+      +'<span>🌙 '+b.nights+' nights · $'+(b.price*b.nights)+'</span>'
+      +'</div></div>';
+  });
+  list.innerHTML=html;
+}
+
+/* ═══════════════════════════
+   SEARCH
+═══════════════════════════ */
+function doSearch(){
+  var inp = document.getElementById('search-input');
+  var clearBtn = document.getElementById('search-clear-btn');
+  if(clearBtn) clearBtn.style.display = inp.value.length>0?'block':'none';
+  renderSearchResults();
+}
+
+function clearSearch(){
+  var inp = document.getElementById('search-input');
+  if(inp) inp.value='';
+  var clearBtn = document.getElementById('search-clear-btn');
+  if(clearBtn) clearBtn.style.display='none';
+  renderSearchResults();
+}
+
+function setFilter(el, filter){
+  searchFilter = filter;
+  document.querySelectorAll('#screen-search .filter-chip').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active');
+  renderSearchResults();
+}
+
+function renderSearchResults(){
+  var query = '';
+  var inp = document.getElementById('search-input');
+  if(inp) query = inp.value.trim().toLowerCase();
+
+  var results = HOTELS.filter(function(h){
+    var matchFilter = searchFilter==='all' || h.tag===searchFilter;
+    var matchQuery = !query || h.name.toLowerCase().indexOf(query)!==-1 || h.loc.toLowerCase().indexOf(query)!==-1;
+    return matchFilter && matchQuery;
+  });
+
+  var lbl = document.getElementById('search-label');
+  if(lbl) lbl.textContent = (query || searchFilter!=='all') ? 'Found '+results.length+' hotel'+(results.length!==1?'s':'') : 'All Hotels ('+HOTELS.length+')';
+
+  var container = document.getElementById('search-results');
+  if(!container) return;
+
+  if(results.length===0){
+    container.innerHTML='<div class="no-results"><div class="no-icon">🔍</div><p>No hotels found.<br>Try a different search or filter.</p></div>';
+    return;
+  }
+
+  var saved = getSaved();
+  var html='';
+  results.forEach(function(h){
+    var isSaved = saved.indexOf(h.id)!==-1;
+    html+='<div class="search-result-card" onclick="openDetail('+h.id+')">'
+      +'<div class="search-result-img '+getImgClass(h.id)+'">'+h.emoji+'</div>'
+      +'<div class="search-result-info">'
+      +'<div class="search-result-name">'+h.name+'</div>'
+      +'<div class="search-result-loc">📍 '+h.loc+'</div>'
+      +'<div class="search-result-row">'
+      +'<div class="search-result-price">$'+h.price+'<span style="font-size:10px;color:var(--grey)">/night</span></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;">'
+      +'<div class="search-result-rating">★ '+h.rating+'</div>'
+      +'<button class="sm-save-btn" id="sr-save-'+h.id+'" style="position:static;width:26px;height:26px;" onclick="event.stopPropagation();toggleSaveSearch('+h.id+')">'+(isSaved?'❤️':'🤍')+'</button>'
+      +'</div></div></div></div>';
+  });
+  container.innerHTML=html;
+}
+
+function toggleSaveSearch(id){
+  var saved=getSaved();
+  var idx=saved.indexOf(id);
+  if(idx===-1){saved.push(id);showToast('❤️ Saved "'+HOTELS[id].name+'"');}
+  else{saved.splice(idx,1);showToast('Removed from saved');}
+  setSaved(saved);
+  var btn=document.getElementById('sr-save-'+id);
+  if(btn) btn.textContent=saved.indexOf(id)!==-1?'❤️':'🤍';
+  renderHomeCards();
+}
+
+/* ═══════════════════════════
+   UI HELPERS
+═══════════════════════════ */
+function togglePass(id,btn){
+  var inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁️';}
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2800);
+}
+
+/* SWIPE */
+var sx=0;
+document.querySelector('.phone').addEventListener('touchstart',function(e){sx=e.touches[0].clientX;},{passive:true});
+document.querySelector('.phone').addEventListener('touchend',function(e){
+  var diff=sx-e.changedTouches[0].clientX; if(Math.abs(diff)<65)return;
+  var active=document.querySelector('.screen.active');
+  if(!active)return;
+  var id=active.id;
+  if(diff>0){
+    if(id==='screen-home')goTo('screen-search');
+    else if(id==='screen-detail')goTo('screen-map');
+  } else {
+    if(id==='screen-map')goTo('screen-detail');
+    else if(id==='screen-detail')goTo(prevScreen);
+  }
+},{passive:true});
+</script>
+</body>
+</html>
