@@ -33,10 +33,11 @@ StayFinder</button>
   </button>
 
   <button class="close-btn" onclick="logout()">LOG OUT</button>
-<audio controls>
-  <source src="Lokiverse 2.0.mp3" type="audio/mpeg">
-  Your browser does not support audio.
-</audio>
+<button  class="close-btn"><div class="song" onclick="playSong('Lokiverse 2.0.mp3.mp3')">Song 1</div>
+<div class="song" onclick="playSong('Naa Ready.mp3')">Song 2</div>
+<div class="song" onclick="playSong('Naa Ready.mp3')">Song 3</div></button>
+
+<audio id="player" controls></audio>
 </div>
 <br>
 <br>

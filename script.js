@@ -30,6 +30,11 @@ function togglePhotos() {
   let x = document.getElementById("photos");
   x.classList.toggle("show");
 }
+function playSong(src) {
+  let player = document.getElementById("player");
+  player.src = src;
+  player.play();
+}
 function logout(){
   localStorage.removeItem("loggedIn");
   window.location = "login.html"; 
