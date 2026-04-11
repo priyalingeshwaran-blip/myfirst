@@ -20,6 +20,9 @@ function pt(){
   window.open("https://www.youtube.com/watch?v=8TZMtslA3UY", "_blank");
 }
 
+function kt(){
+window.location="kumaran.html";
+}
 function toggleDark() {
   document.body.classList.toggle("dark");
 }
