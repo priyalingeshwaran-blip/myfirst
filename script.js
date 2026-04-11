@@ -21,7 +21,7 @@ function pt(){
 }
 
 function kt(){
-window.location="kumaran.html";
+window.location="kt.html";
 }
 function toggleDark() {
   document.body.classList.toggle("dark");
