@@ -21,7 +21,7 @@ function pt(){
 }
 
 function kt(){
-window.location="kt.html";
+window.open("kt.html","_blank");
 }
 function toggleDark() {
   document.body.classList.toggle("dark");
