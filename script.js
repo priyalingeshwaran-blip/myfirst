@@ -19,7 +19,9 @@ function spt(){
 function pt(){
   window.open("https://www.youtube.com/watch?v=8TZMtslA3UY", "_blank");
 }
-
+function s(){
+window.location="sns.html";
+}
 function kt(){
 window.open("kt.html","_blank");
 }
@@ -30,6 +32,9 @@ function togglePhotos() {
   let x = document.getElementById("photos");
   x.classList.toggle("show");
 }
+function ok(){
+windows.open("https://poki.com/en/g/blast-buddies","_blank")
+}
 function playSong(src) {
   let player = document.getElementById("player");
   player.src = src;
@@ -38,4 +43,7 @@ function playSong(src) {
 function logout(){
   localStorage.removeItem("loggedIn");
   window.location = "login.html"; 
+}
+function back(){
+window.location="loader.html";
 }
