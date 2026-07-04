@@ -32,8 +32,8 @@ function togglePhotos() {
   let x = document.getElementById("photos");
   x.classList.toggle("show");
 }
-function ok(){
-windows.open("https://poki.com/en/g/blast-buddies","_blank")
+function blast(){
+windows.open("https://www.youtube.com/watch?v=62bIsvRcPv0","_blank")
 }
 function playSong(src) {
   let player = document.getElementById("player");
