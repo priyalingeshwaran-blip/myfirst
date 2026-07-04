@@ -13,7 +13,6 @@ h1 {
   font-family: "Century Schoolbook";
   font-size: 40px;
 }
-
 .sidebar {
   position: fixed;
   left: -250px;
@@ -26,8 +25,9 @@ h1 {
   flex-direction: column;
   gap: 10px;
   transition: 0.3s;
-  z-index: 2;
- overflow-y: auto;         
+  z-index: 9999;
+
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
