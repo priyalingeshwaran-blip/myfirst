@@ -1,0 +1,104 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top, #0a0f1c, #141e30, #243b55);
+    overflow: hidden;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+body::before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        #4facfe,
+        #00f2fe,
+        #4facfe
+    );
+    animation: rotateBG 12s linear infinite;
+    filter: blur(140px);
+    opacity: 0.2;
+}
+
+@keyframes rotateBG {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.logo {
+    text-align: center;
+    z-index: 2;
+}
+
+
+.logo h1 {
+    font-size: 55px;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: glowText 2s ease-in-out infinite alternate;
+}
+
+
+.logo p {
+    color: #cccccc;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    font-size: 16px;
+    opacity: 0;
+    animation: fadeIn 2s forwards 1s;
+}
+
+
+@keyframes glowText {
+    from {
+        text-shadow: 0 0 10px #4facfe;
+    }
+    to {
+        text-shadow: 0 0 25px #00f2fe;
+    }
+}
+
+
+.enter-btn {
+    margin-top: 25px;
+    padding: 10px 28px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    color: white;
+    box-shadow: 0 0 12px #00f2fe;
+    transition: 0.3s;
+    opacity: 0;
+    animation: fadeIn 2s forwards 2s;
+}
+
+.enter-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 25px #00f2fe;
+}
+
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.fade-out {
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+}
