@@ -47,3 +47,6 @@ function logout(){
 function back(){
 window.location="loader.html";
 }
+function so(){
+window.open("https://spideytracker.com/","_blank");
+}
