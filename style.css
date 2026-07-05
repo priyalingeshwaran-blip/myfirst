@@ -1,6 +1,13 @@
-body{
-  background-color:cyan;
-  overflow:auto;
+body {
+    margin: 0;
+   overflow:auto;
+    height: 100vh;
+    background: linear-gradient(
+        120deg,
+        rgb(17, 77, 99) 0%,
+        rgb(18, 61, 84) 50%,
+        rgb(45, 79, 116) 100%
+    );
 }
 
 .circle{
