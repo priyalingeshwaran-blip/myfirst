@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  pre.code-block {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre;
+  }
+  details h4 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>HOME</h1>
+<h2 style="text-align:center;">🐍 Python Practical Questions</h2>
+
+<div class="questions">
+
+<details>
+<summary>Program 1</summary>
+<p>
+1. Write a menu driven program to display the following:<br>
+a. Armstrong Number<br>
+b. Prime Number
+</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 1: Menu driven program - Armstrong Number and Prime Number
+
+def is_armstrong(num):
+    &quot;&quot;&quot;Check whether a number is an Armstrong number.&quot;&quot;&quot;
+    temp = num
+    n = len(str(num))
+    total = 0
+    while temp &gt; 0:
+        digit = temp % 10
+        total += digit ** n
+        temp //= 10
+    return total == num
+
+
+def is_prime(num):
+    &quot;&quot;&quot;Check whether a number is prime.&quot;&quot;&quot;
+    if num &lt; 2:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+
+def main():
+    while True:
+        print(&quot;\n----- MENU -----&quot;)
+        print(&quot;a. Armstrong Number&quot;)
+        print(&quot;b. Prime Number&quot;)
+        print(&quot;c. Exit&quot;)
+        choice = input(&quot;Enter your choice (a/b/c): &quot;).lower()
+
+        if choice == &#x27;a&#x27;:
+            num = int(input(&quot;Enter a number: &quot;))
+            if is_armstrong(num):
+                print(f&quot;{num} is an Armstrong number.&quot;)
+            else:
+                print(f&quot;{num} is not an Armstrong number.&quot;)
+
+        elif choice == &#x27;b&#x27;:
+            num = int(input(&quot;Enter a number: &quot;))
+            if is_prime(num):
+                print(f&quot;{num} is a Prime number.&quot;)
+            else:
+                print(f&quot;{num} is not a Prime number.&quot;)
+
+        elif choice == &#x27;c&#x27;:
+            print(&quot;Exiting program...&quot;)
+            break
+
+        else:
+            print(&quot;Invalid choice! Please try again.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 2</summary>
+<p>
+Write a menu driven program to display the following:<br>
+a. Palindrome of a given string<br>
+b. Fibonacci series up to n terms<br>
+c. Factorial of a given number
+</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 2: Menu driven program - Palindrome, Fibonacci series, Factorial
+
+def is_palindrome(s):
+    &quot;&quot;&quot;Check whether a string is a palindrome.&quot;&quot;&quot;
+    return s == s[::-1]
+
+
+def fibonacci_series(n):
+    &quot;&quot;&quot;Return Fibonacci series up to n terms as a list.&quot;&quot;&quot;
+    series = []
+    a, b = 0, 1
+    for _ in range(n):
+        series.append(a)
+        a, b = b, a + b
+    return series
+
+
+def factorial(n):
+    &quot;&quot;&quot;Return factorial of a number.&quot;&quot;&quot;
+    fact = 1
+    for i in range(1, n + 1):
+        fact *= i
+    return fact
+
+
+def main():
+    while True:
+        print(&quot;\n----- MENU -----&quot;)
+        print(&quot;a. Palindrome of a given string&quot;)
+        print(&quot;b. Fibonacci series up to n terms&quot;)
+        print(&quot;c. Factorial of a given number&quot;)
+        print(&quot;d. Exit&quot;)
+        choice = input(&quot;Enter your choice (a/b/c/d): &quot;).lower()
+
+        if choice == &#x27;a&#x27;:
+            s = input(&quot;Enter a string: &quot;)
+            if is_palindrome(s):
+                print(f&quot;&#x27;{s}&#x27; is a palindrome.&quot;)
+            else:
+                print(f&quot;&#x27;{s}&#x27; is not a palindrome.&quot;)
+
+        elif choice == &#x27;b&#x27;:
+            n = int(input(&quot;Enter number of terms: &quot;))
+            print(&quot;Fibonacci series:&quot;, fibonacci_series(n))
+
+        elif choice == &#x27;c&#x27;:
+            n = int(input(&quot;Enter a number: &quot;))
+            print(f&quot;Factorial of {n} is {factorial(n)}&quot;)
+
+        elif choice == &#x27;d&#x27;:
+            print(&quot;Exiting program...&quot;)
+            break
+
+        else:
+            print(&quot;Invalid choice! Please try again.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 3</summary>
+<p>
+Write a program to print the following patterns using functions.
+</p>
+<pre>
+*
+* *
+* * *
+* * * *
+* * * * *
+
+54321
+4321
+321
+21
+1
+
+A
+BB
+CCC
+DDDD
+EEEEE
+</pre>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 3: Print patterns (stars, numbers, letters) using functions
+# Pattern 1 (stars):     *
+#                        * *
+#                        * * *
+#                        * * * *
+#                        * * * * *
+#
+# Pattern 2 (numbers):   54321
+#                        4321
+#                        321
+#                        21
+#                        1
+#
+# Pattern 3 (letters):   A
+#                        BB
+#                        CCC
+#                        DDDD
+#                        EEEEE
+
+def star_pattern(n):
+    &quot;&quot;&quot;Return list of strings for the star pattern.&quot;&quot;&quot;
+    lines = []
+    for i in range(1, n + 1):
+        lines.append(&quot; &quot;.join([&quot;*&quot;] * i))
+    return lines
+
+
+def number_pattern(n):
+    &quot;&quot;&quot;Return list of strings for the descending number pattern.&quot;&quot;&quot;
+    lines = []
+    for i in range(n, 0, -1):
+        # for row size i, numbers go from i down to 1
+        row = &quot;&quot;.join(str(num) for num in range(i, 0, -1))
+        lines.append(row)
+    return lines
+
+
+def letter_pattern(n):
+    &quot;&quot;&quot;Return list of strings for the letter pattern (A, BB, CCC, ...).&quot;&quot;&quot;
+    lines = []
+    for i in range(1, n + 1):
+        letter = chr(64 + i)  # 65 = &#x27;A&#x27;
+        lines.append(letter * i)
+    return lines
+
+
+def print_patterns(n=5):
+    stars = star_pattern(n)
+    numbers = number_pattern(n)
+    letters = letter_pattern(n)
+
+    for i in range(n):
+        # left-align each column for a neat side-by-side display
+        print(f&quot;{stars[i]:&lt;20}{numbers[i]:&lt;20}{letters[i]:&lt;20}&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    print_patterns(5)
+</code></pre>
+</details>
+
+<details>
+<summary>Program 4</summary>
+<p>Create a list with marks of 10 students and perform the following:
+<ul>
+<li>Add marks</li>
+<li>Sort in descending order</li>
+<li>Display highest mark</li>
+</ul>
+</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 4: Create a list with marks of 10 students and perform operations
+
+def add_marks(marks_list):
+    &quot;&quot;&quot;Accept marks of 10 students and add them to the list.&quot;&quot;&quot;
+    print(&quot;Enter marks of 10 students:&quot;)
+    for i in range(10):
+        mark = float(input(f&quot;Enter marks of student {i + 1}: &quot;))
+        marks_list.append(mark)
+    return marks_list
+
+
+def sort_descending(marks_list):
+    &quot;&quot;&quot;Sort the list in descending order.&quot;&quot;&quot;
+    marks_list.sort(reverse=True)
+    return marks_list
+
+
+def highest_mark(marks_list):
+    &quot;&quot;&quot;Return the highest mark in the list.&quot;&quot;&quot;
+    return max(marks_list)
+
+
+def main():
+    marks = []
+    marks = add_marks(marks)
+    print(&quot;\nOriginal list of marks:&quot;, marks)
+
+    marks = sort_descending(marks)
+    print(&quot;Marks sorted in descending order:&quot;, marks)
+
+    print(&quot;Highest mark:&quot;, highest_mark(marks))
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 5</summary>
+<p>Create a user defined function that accepts N strings, stores them in a tuple, and prints the longest and shortest string.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 5: Accept N strings, store in a tuple, find longest and shortest
+
+def accept_strings(n):
+    &quot;&quot;&quot;Accept n strings from the user and return them as a tuple.&quot;&quot;&quot;
+    strings = []
+    for i in range(n):
+        s = input(f&quot;Enter string {i + 1}: &quot;)
+        strings.append(s)
+    return tuple(strings)
+
+
+def find_longest_shortest(string_tuple):
+    &quot;&quot;&quot;Return the longest and shortest string from the tuple.&quot;&quot;&quot;
+    longest = max(string_tuple, key=len)
+    shortest = min(string_tuple, key=len)
+    return longest, shortest
+
+
+def main():
+    n = int(input(&quot;Enter the number of strings: &quot;))
+    string_tuple = accept_strings(n)
+    print(&quot;\nTuple of strings:&quot;, string_tuple)
+
+    longest, shortest = find_longest_shortest(string_tuple)
+    print(&quot;Longest string:&quot;, longest)
+    print(&quot;Shortest string:&quot;, shortest)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 6</summary>
+<p>Create a user defined function that accepts a string and calculates uppercase, lowercase, vowels and consonants using a dictionary.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 6: Count uppercase, lowercase, vowels, consonants using a dictionary
+
+def count_characters(s):
+    &quot;&quot;&quot;Accept a string and return counts of upper, lower, vowels, consonants.&quot;&quot;&quot;
+    counts = {&quot;uppercase&quot;: 0, &quot;lowercase&quot;: 0, &quot;vowels&quot;: 0, &quot;consonants&quot;: 0}
+    vowels = &quot;aeiouAEIOU&quot;
+
+    for ch in s:
+        if ch.isupper():
+            counts[&quot;uppercase&quot;] += 1
+        if ch.islower():
+            counts[&quot;lowercase&quot;] += 1
+        if ch.isalpha():
+            if ch in vowels:
+                counts[&quot;vowels&quot;] += 1
+            else:
+                counts[&quot;consonants&quot;] += 1
+
+    return counts
+
+
+def main():
+    s = input(&quot;Enter a string: &quot;)
+    result = count_characters(s)
+
+    print(&quot;\nUppercase letters:&quot;, result[&quot;uppercase&quot;])
+    print(&quot;Lowercase letters:&quot;, result[&quot;lowercase&quot;])
+    print(&quot;Vowels:&quot;, result[&quot;vowels&quot;])
+    print(&quot;Consonants:&quot;, result[&quot;consonants&quot;])
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 7</summary>
+<p>
+Accept a list of N elements and perform:
+<ol>
+<li>Swap first half with second half.</li>
+<li>Multiply elements in even position by 5.</li>
+</ol>
+</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 7: Accept a list of N elements and:
+# i)  Swap elements in the first half with the second half
+# ii) Multiply elements in the even position with 5
+
+def accept_list(n):
+    &quot;&quot;&quot;Accept n elements from the user and return as a list.&quot;&quot;&quot;
+    lst = []
+    for i in range(n):
+        val = int(input(f&quot;Enter element {i + 1}: &quot;))
+        lst.append(val)
+    return lst
+
+
+def swap_halves(lst):
+    &quot;&quot;&quot;Swap the first half of the list with the second half.&quot;&quot;&quot;
+    n = len(lst)
+    mid = n // 2
+    # If n is odd, the middle element stays in place
+    first_half = lst[:mid]
+    second_half = lst[n - mid:]
+    middle = lst[mid:n - mid]  # empty if n is even
+    return second_half + middle + first_half
+
+
+def multiply_even_position(lst):
+    &quot;&quot;&quot;Multiply elements at even positions (0-based index 1,3,5,...) by 5.
+    Here &#x27;even position&#x27; is taken as position number 2,4,6,... (i.e. index 1,3,5,...).&quot;&quot;&quot;
+    new_list = lst.copy()
+    for i in range(len(new_list)):
+        position = i + 1  # 1-based position
+        if position % 2 == 0:
+            new_list[i] *= 5
+    return new_list
+
+
+def main():
+    n = int(input(&quot;Enter number of elements: &quot;))
+    lst = accept_list(n)
+    print(&quot;\nOriginal list:&quot;, lst)
+
+    swapped = swap_halves(lst)
+    print(&quot;List after swapping halves:&quot;, swapped)
+
+    multiplied = multiply_even_position(swapped)
+    print(&quot;List after multiplying even position elements by 5:&quot;, multiplied)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 8</summary>
+<p>
+a. Generate a three-digit random number.<br>
+b. Find the arc length of a circle.
+</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 8:
+# a. Generate a three digit random number
+# b. Find and display the arc length of a circle
+
+import random
+import math
+
+
+def generate_three_digit_random():
+    &quot;&quot;&quot;Generate and return a random three digit number (100-999).&quot;&quot;&quot;
+    return random.randint(100, 999)
+
+
+def arc_length(radius, angle_degrees):
+    &quot;&quot;&quot;Calculate arc length given radius and angle in degrees.
+    Arc Length = (angle/360) * 2 * pi * radius &quot;&quot;&quot;
+    return (angle_degrees / 360) * 2 * math.pi * radius
+
+
+def main():
+    # a. Random three digit number
+    rand_num = generate_three_digit_random()
+    print(&quot;Random three digit number:&quot;, rand_num)
+
+    # b. Arc length of a circle
+    radius = float(input(&quot;\nEnter the radius of the circle: &quot;))
+    angle = float(input(&quot;Enter the angle (in degrees) subtended at the centre: &quot;))
+    length = arc_length(radius, angle)
+    print(f&quot;Arc length = {length:.2f} units&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 9</summary>
+<p>Create <b>mother.txt</b>, write information, display it, then copy lines to <b>parent.txt</b> except those containing the letter 'A'.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 9: Create text file &#x27;mother.txt&#x27;, print its content, then copy
+# lines that do NOT contain the letter &#x27;A&#x27; (upper or lower case, as needed)
+# into &#x27;parent.txt&#x27;
+
+def create_mother_file():
+    &quot;&quot;&quot;Create mother.txt and write some information into it.&quot;&quot;&quot;
+    with open(&quot;mother.txt&quot;, &quot;w&quot;) as f:
+        f.write(&quot;A mother is the first teacher of a child.\n&quot;)
+        f.write(&quot;She gives unconditional love and care.\n&quot;)
+        f.write(&quot;Her sacrifices cannot be measured.\n&quot;)
+        f.write(&quot;She stands by us through every situation.\n&quot;)
+        f.write(&quot;Nothing compares to a mother&#x27;s blessing.\n&quot;)
+    print(&quot;mother.txt created successfully.&quot;)
+
+
+def display_file(filename):
+    &quot;&quot;&quot;Read and print the content of a file.&quot;&quot;&quot;
+    print(f&quot;\n----- Content of {filename} -----&quot;)
+    with open(filename, &quot;r&quot;) as f:
+        print(f.read())
+
+
+def copy_without_letter_A():
+    &quot;&quot;&quot;Read mother.txt line by line and write to parent.txt,
+    skipping lines that contain the letter &#x27;A&#x27; (case-sensitive, capital A).&quot;&quot;&quot;
+    with open(&quot;mother.txt&quot;, &quot;r&quot;) as source, open(&quot;parent.txt&quot;, &quot;w&quot;) as dest:
+        for line in source:
+            if &quot;A&quot; not in line:
+                dest.write(line)
+    print(&quot;parent.txt created successfully (lines with &#x27;A&#x27; excluded).&quot;)
+
+
+def main():
+    create_mother_file()
+    display_file(&quot;mother.txt&quot;)
+
+    copy_without_letter_A()
+    display_file(&quot;parent.txt&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 10</summary>
+<p>Read <b>sample.txt</b> and:
+<ul>
+<li>Count occurrences of the word "No".</li>
+<li>Display lines starting with 'N'.</li>
+</ul>
+</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 10: Read from &#x27;sample.txt&#x27; and:
+# a. Find and display the occurrences of the word &quot;No&quot;
+# b. Display all the lines that start with &#x27;N&#x27;
+
+def create_sample_file():
+    &quot;&quot;&quot;Create sample.txt with the given content (so the program is self-contained).&quot;&quot;&quot;
+    content = (&quot;No princely pomp, no wealthy store, &quot;
+               &quot;No force to win the victory, &quot;
+               &quot;No wily wit to salve a sore, &quot;
+               &quot;No shape to feed a loving eye; &quot;
+               &quot;To none of these I yield as thrall; &quot;
+               &quot;For why? my mind doth serve for all ...\n&quot;)
+    with open(&quot;sample.txt&quot;, &quot;w&quot;) as f:
+        f.write(content)
+
+
+def count_word_occurrences(filename, word):
+    &quot;&quot;&quot;Count occurrences of a specific word (case-sensitive) in the file.&quot;&quot;&quot;
+    count = 0
+    with open(filename, &quot;r&quot;) as f:
+        for line in f:
+            words = line.split()
+            count += words.count(word)
+    return count
+
+
+def display_lines_starting_with(filename, letter):
+    &quot;&quot;&quot;Display all lines that start with the given letter.&quot;&quot;&quot;
+    print(f&quot;\nLines starting with &#x27;{letter}&#x27;:&quot;)
+    with open(filename, &quot;r&quot;) as f:
+        for line in f:
+            if line.strip().startswith(letter):
+                print(line.strip())
+
+
+def main():
+    create_sample_file()  # remove this call if sample.txt already exists
+
+    occurrences = count_word_occurrences(&quot;sample.txt&quot;, &quot;No&quot;)
+    print(f&quot;The word &#x27;No&#x27; occurs {occurrences} times in sample.txt&quot;)
+
+    display_lines_starting_with(&quot;sample.txt&quot;, &quot;N&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 11</summary>
+<p>Create <b>Employee.dat</b>, update salary greater than 15000 by adding 5000, display all records and count them.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 11: Employee.dat binary file operations using pickle
+# a. Insert Empid, Name, Department, Salary
+# b. Update all records where salary &gt; 15000 with an increment of 5000
+# c. Read and display all records, and count number of records
+
+import pickle
+
+
+def insert_employees():
+    &quot;&quot;&quot;Accept employee details and append them to Employee.dat&quot;&quot;&quot;
+    n = int(input(&quot;How many employee records do you want to enter? &quot;))
+    with open(&quot;Employee.dat&quot;, &quot;ab&quot;) as f:
+        for i in range(n):
+            print(f&quot;\nEnter details for employee {i + 1}:&quot;)
+            empid = input(&quot;Empid: &quot;)
+            name = input(&quot;Name: &quot;)
+            dept = input(&quot;Department: &quot;)
+            salary = float(input(&quot;Salary: &quot;))
+            record = {&quot;Empid&quot;: empid, &quot;Name&quot;: name,
+                      &quot;Department&quot;: dept, &quot;Salary&quot;: salary}
+            pickle.dump(record, f)
+    print(&quot;Records inserted successfully.&quot;)
+
+
+def update_salary(increment=5000, threshold=15000):
+    &quot;&quot;&quot;Update all records where salary &gt; threshold by adding increment.&quot;&quot;&quot;
+    records = []
+    try:
+        with open(&quot;Employee.dat&quot;, &quot;rb&quot;) as f:
+            while True:
+                try:
+                    record = pickle.load(f)
+                    if record[&quot;Salary&quot;] &gt; threshold:
+                        record[&quot;Salary&quot;] += increment
+                    records.append(record)
+                except EOFError:
+                    break
+    except FileNotFoundError:
+        print(&quot;Employee.dat not found.&quot;)
+        return
+
+    with open(&quot;Employee.dat&quot;, &quot;wb&quot;) as f:
+        for record in records:
+            pickle.dump(record, f)
+    print(f&quot;Salaries updated for records with salary &gt; {threshold}.&quot;)
+
+
+def display_and_count():
+    &quot;&quot;&quot;Read Employee.dat, display all records and count them.&quot;&quot;&quot;
+    count = 0
+    try:
+        with open(&quot;Employee.dat&quot;, &quot;rb&quot;) as f:
+            print(&quot;\n----- Employee Records -----&quot;)
+            while True:
+                try:
+                    record = pickle.load(f)
+                    print(record)
+                    count += 1
+                except EOFError:
+                    break
+    except FileNotFoundError:
+        print(&quot;Employee.dat not found.&quot;)
+        return
+    print(f&quot;\nTotal number of records: {count}&quot;)
+
+
+def main():
+    while True:
+        print(&quot;\n----- MENU -----&quot;)
+        print(&quot;1. Insert employee records&quot;)
+        print(&quot;2. Update salary (salary &gt; 15000, increment 5000)&quot;)
+        print(&quot;3. Display all records and count&quot;)
+        print(&quot;4. Exit&quot;)
+        choice = input(&quot;Enter your choice: &quot;)
+
+        if choice == &#x27;1&#x27;:
+            insert_employees()
+        elif choice == &#x27;2&#x27;:
+            update_salary()
+        elif choice == &#x27;3&#x27;:
+            display_and_count()
+        elif choice == &#x27;4&#x27;:
+            break
+        else:
+            print(&quot;Invalid choice!&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 12</summary>
+<p>Create <b>Student.dat</b>, search by roll number and display the student's name.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 12: Create binary file &#x27;Student.dat&#x27; to store rollno and name.
+# Search for a given rollno and display the name, or an appropriate message.
+
+import pickle
+
+
+def create_student_file():
+    &quot;&quot;&quot;Accept rollno and name of students and store them in Student.dat&quot;&quot;&quot;
+    n = int(input(&quot;How many student records do you want to enter? &quot;))
+    with open(&quot;Student.dat&quot;, &quot;wb&quot;) as f:
+        for i in range(n):
+            rollno = int(input(f&quot;Enter roll number of student {i + 1}: &quot;))
+            name = input(f&quot;Enter name of student {i + 1}: &quot;)
+            record = {&quot;rollno&quot;: rollno, &quot;name&quot;: name}
+            pickle.dump(record, f)
+    print(&quot;Student.dat created successfully.&quot;)
+
+
+def search_student(rollno_to_find):
+    &quot;&quot;&quot;Search for a given rollno in Student.dat and display the name.&quot;&quot;&quot;
+    found = False
+    try:
+        with open(&quot;Student.dat&quot;, &quot;rb&quot;) as f:
+            while True:
+                try:
+                    record = pickle.load(f)
+                    if record[&quot;rollno&quot;] == rollno_to_find:
+                        print(f&quot;Roll No: {record[&#x27;rollno&#x27;]}  Name: {record[&#x27;name&#x27;]}&quot;)
+                        found = True
+                        break
+                except EOFError:
+                    break
+    except FileNotFoundError:
+        print(&quot;Student.dat not found. Please create it first.&quot;)
+        return
+
+    if not found:
+        print(f&quot;No student found with roll number {rollno_to_find}.&quot;)
+
+
+def main():
+    create_student_file()
+    rollno = int(input(&quot;\nEnter roll number to search: &quot;))
+    search_student(rollno)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 13</summary>
+<p>Create and read a CSV file containing item number, item name and price. Search by item number.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 13: Create and read a CSV file storing itemno, item name, price.
+# Also search for a particular item using itemno.
+
+import csv
+
+
+def create_csv_file():
+    &quot;&quot;&quot;Accept item details and write them into items.csv&quot;&quot;&quot;
+    n = int(input(&quot;How many items do you want to enter? &quot;))
+    with open(&quot;items.csv&quot;, &quot;w&quot;, newline=&quot;&quot;) as f:
+        writer = csv.writer(f)
+        writer.writerow([&quot;ItemNo&quot;, &quot;ItemName&quot;, &quot;Price&quot;])  # header
+        for i in range(n):
+            itemno = input(f&quot;Enter item number for item {i + 1}: &quot;)
+            name = input(f&quot;Enter item name for item {i + 1}: &quot;)
+            price = input(f&quot;Enter price for item {i + 1}: &quot;)
+            writer.writerow([itemno, name, price])
+    print(&quot;items.csv created successfully.&quot;)
+
+
+def read_csv_file():
+    &quot;&quot;&quot;Read and display all records from items.csv&quot;&quot;&quot;
+    print(&quot;\n----- Items in items.csv -----&quot;)
+    with open(&quot;items.csv&quot;, &quot;r&quot;, newline=&quot;&quot;) as f:
+        reader = csv.reader(f)
+        for row in reader:
+            print(row)
+
+
+def search_item(itemno_to_find):
+    &quot;&quot;&quot;Search for a particular item using itemno and display its details.&quot;&quot;&quot;
+    found = False
+    with open(&quot;items.csv&quot;, &quot;r&quot;, newline=&quot;&quot;) as f:
+        reader = csv.reader(f)
+        next(reader)  # skip header
+        for row in reader:
+            if row and row[0] == itemno_to_find:
+                print(f&quot;ItemNo: {row[0]}  Name: {row[1]}  Price: {row[2]}&quot;)
+                found = True
+                break
+    if not found:
+        print(f&quot;No item found with item number {itemno_to_find}&quot;)
+
+
+def main():
+    create_csv_file()
+    read_csv_file()
+
+    itemno = input(&quot;\nEnter item number to search: &quot;)
+    search_item(itemno)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 14</summary>
+<p>Create a binary file with roll number, name and marks. Update marks using roll number.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 14: Create a binary file with rollno, name and marks.
+# Input a roll number and update the marks.
+
+import pickle
+
+
+def create_file():
+    &quot;&quot;&quot;Accept rollno, name and marks and store them in Marks.dat&quot;&quot;&quot;
+    n = int(input(&quot;How many student records do you want to enter? &quot;))
+    with open(&quot;Marks.dat&quot;, &quot;wb&quot;) as f:
+        for i in range(n):
+            rollno = int(input(f&quot;Enter roll number of student {i + 1}: &quot;))
+            name = input(f&quot;Enter name of student {i + 1}: &quot;)
+            marks = float(input(f&quot;Enter marks of student {i + 1}: &quot;))
+            record = {&quot;rollno&quot;: rollno, &quot;name&quot;: name, &quot;marks&quot;: marks}
+            pickle.dump(record, f)
+    print(&quot;Marks.dat created successfully.&quot;)
+
+
+def update_marks(rollno_to_update, new_marks):
+    &quot;&quot;&quot;Update the marks of the student with the given roll number.&quot;&quot;&quot;
+    records = []
+    found = False
+    try:
+        with open(&quot;Marks.dat&quot;, &quot;rb&quot;) as f:
+            while True:
+                try:
+                    record = pickle.load(f)
+                    if record[&quot;rollno&quot;] == rollno_to_update:
+                        record[&quot;marks&quot;] = new_marks
+                        found = True
+                    records.append(record)
+                except EOFError:
+                    break
+    except FileNotFoundError:
+        print(&quot;Marks.dat not found. Please create it first.&quot;)
+        return
+
+    if found:
+        with open(&quot;Marks.dat&quot;, &quot;wb&quot;) as f:
+            for record in records:
+                pickle.dump(record, f)
+        print(f&quot;Marks updated successfully for roll number {rollno_to_update}.&quot;)
+    else:
+        print(f&quot;No record found with roll number {rollno_to_update}.&quot;)
+
+
+def display_all():
+    &quot;&quot;&quot;Display all records in Marks.dat&quot;&quot;&quot;
+    try:
+        with open(&quot;Marks.dat&quot;, &quot;rb&quot;) as f:
+            print(&quot;\n----- Student Records -----&quot;)
+            while True:
+                try:
+                    record = pickle.load(f)
+                    print(record)
+                except EOFError:
+                    break
+    except FileNotFoundError:
+        print(&quot;Marks.dat not found.&quot;)
+
+
+def main():
+    create_file()
+    display_all()
+
+    rollno = int(input(&quot;\nEnter roll number to update marks: &quot;))
+    new_marks = float(input(&quot;Enter new marks: &quot;))
+    update_marks(rollno, new_marks)
+
+    display_all()
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 15</summary>
+<p>Create a CSV file with user-id and password. Search password using user-id.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 15: Create a CSV file with user-id and password.
+# Read and search the password for a given user-id.
+
+import csv
+
+
+def create_csv_file():
+    &quot;&quot;&quot;Accept user-id and password from the user and store them in users.csv&quot;&quot;&quot;
+    n = int(input(&quot;How many users do you want to enter? &quot;))
+    with open(&quot;users.csv&quot;, &quot;w&quot;, newline=&quot;&quot;) as f:
+        writer = csv.writer(f)
+        writer.writerow([&quot;UserID&quot;, &quot;Password&quot;])  # header
+        for i in range(n):
+            userid = input(f&quot;Enter user-id {i + 1}: &quot;)
+            password = input(f&quot;Enter password for {userid}: &quot;)
+            writer.writerow([userid, password])
+    print(&quot;users.csv created successfully.&quot;)
+
+
+def read_csv_file():
+    &quot;&quot;&quot;Read and display all records from users.csv&quot;&quot;&quot;
+    print(&quot;\n----- Users in users.csv -----&quot;)
+    with open(&quot;users.csv&quot;, &quot;r&quot;, newline=&quot;&quot;) as f:
+        reader = csv.reader(f)
+        for row in reader:
+            print(row)
+
+
+def search_password(userid_to_find):
+    &quot;&quot;&quot;Search and display the password for the given user-id.&quot;&quot;&quot;
+    found = False
+    with open(&quot;users.csv&quot;, &quot;r&quot;, newline=&quot;&quot;) as f:
+        reader = csv.reader(f)
+        next(reader)  # skip header
+        for row in reader:
+            if row and row[0] == userid_to_find:
+                print(f&quot;Password for {userid_to_find} is: {row[1]}&quot;)
+                found = True
+                break
+    if not found:
+        print(f&quot;No user found with user-id {userid_to_find}&quot;)
+
+
+def main():
+    create_csv_file()
+    read_csv_file()
+
+    userid = input(&quot;\nEnter user-id to search password: &quot;)
+    search_password(userid)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+</details>
+
+<details>
+<summary>Program 16</summary>
+<p>Implement a Stack using List.</p>
+
+<h4>Answer:</h4>
+<pre class="code-block"><code class="language-python"># Program 16: Implement a stack using a list
+
+stack = []
+
+
+def push(item):
+    &quot;&quot;&quot;Push an item onto the stack.&quot;&quot;&quot;
+    stack.append(item)
+    print(f&quot;{item} pushed to stack.&quot;)
+
+
+def pop():
+    &quot;&quot;&quot;Pop and return the top item of the stack.&quot;&quot;&quot;
+    if not stack:
+        print(&quot;Stack Underflow! Stack is empty.&quot;)
+        return None
+    item = stack.pop()
+    print(f&quot;{item} popped from stack.&quot;)
+    return item
+
+
+def peek():
+    &quot;&quot;&quot;Return the top item of the stack without removing it.&quot;&quot;&quot;
+    if not stack:
+        print(&quot;Stack is empty.&quot;)
+        return None
+    print(f&quot;Top element is: {stack[-1]}&quot;)
+    return stack[-1]
+
+
+def display():
+    &quot;&quot;&quot;Display the current stack.&quot;&quot;&quot;
+    if not stack:
+        print(&quot;Stack is empty.&quot;)
+    else:
+        print(&quot;Stack (top to bottom):&quot;, stack[::-1])
+
+
+def main():
+    while True:
+        print(&quot;\n----- STACK MENU -----&quot;)
+        print(&quot;1. Push&quot;)
+        print(&quot;2. Pop&quot;)
+        print(&quot;3. Peek&quot;)
+        print(&quot;4. Display&quot;)
+        print(&quot;5. Exit&quot;)
+        choice = input(&quot;Enter your choice: &quot;)
+
+        if choice == &#x27;1&#x27;:
+            item = input(&quot;Enter item to push: &quot;)
+            push(item)
+        elif choice == &#x27;2&#x27;:
+            pop()
+        elif choice == &#x27;3&#x27;:
+            peek()
+        elif choice == &#x27;4&#x27;:
+            display()
+        elif choice == &#x27;5&#x27;:
+            print(&quot;Exiting program...&quot;)
+            break
+        else:
+            print(&quot;Invalid choice!&quot;)
+
+
+
+    main()
+</code></pre>
+</details>
+
+</div>
+
+<button onclick="openMenu()">
+  <img src="cmn.png" width="50">
+</button>
+
+<div id="overlay" onclick="closeMenu()"></div>
+
+<div id="sidebar" class="sidebar">
+
+  <button class="close-btn" onclick="toggleDark()">DARK MODE</button>
+
+
+
+  <button class="close-btn" onclick="main()">
+    <img src="yt.png" width="120">
+  </button>
+
+  <button class="close-btn" onclick="spt()">
+    <img src="spt.png" width="150">
+  </button>
+
+  <button class="close-btn" onclick="kt()">
+    StayFinder
+  </button>
+
+  <button class="close-btn" onclick="pt()">
+    <img src="spdimages.jfif" width="210" height="130">
+  </button>
+
+  <button class="close-btn" onclick="so()">SPIDEY</button>
+
+  <a href="https://poki.com/en/g/blast-buddies" target="_blank">
+    <button class="close-btn">BLAST</button>
+  </a>
+
+  <button class="close-btn" onclick="s()">Songs</button>
+
+  <button class="close-btn" onclick="logout()">LOG OUT</button>
+
+</div>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+<div class="container">
+  <button class="close-btn" onclick="blast()">
+    <img src="spd.webp">
+  </button>
+</div>
+
+<div class="container">
+  <img src="ling.jpeg" class="circle">
+  👋 About Me<br>
+
+  Hi, I'm S. Lingeshwaran -- a Python / HTML / JavaScript developer
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
