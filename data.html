@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Database</h2>
+
+<table border="1" id="tbl">
+<tr>
+<th>Name</th>
+<th>Password</th>
+</tr>
+</table>
+
+<script>
+fetch("database.json")
+.then(r => r.json())
+.then(data => {
+    let table = document.getElementById("tbl");
+
+    data.forEach(user => {
+        let row = table.insertRow();
+        row.insertCell().innerText = user[0];
+        row.insertCell().innerText = user[1];
+    });
+});
+</script>
+
+</body>
+</html>
